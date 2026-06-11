@@ -4,8 +4,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stretch Control · Oba Hortifruti</title>
-<link href="./Stretch Control · Oba Hortifruti_files/css2" rel="stylesheet">
-<script src="./Stretch Control · Oba Hortifruti_files/xlsx.full.min.js.download"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Firebase compat (CDN) · use a MESMA versão dos seus outros apps Oba p/ consistência -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
 :root{
   --bg:#f5f7f2;--bg2:#ffffff;--bg3:#eef1ea;
@@ -167,7 +170,7 @@ tfoot td{padding:10px 16px;font-size:12px;font-weight:600;color:var(--text2);fon
       <span>Inventário</span>
     </div>
   </nav>
-  <div class="sb-footer">v3.3 · Jun/2026</div>
+  <div class="sb-footer">v3.3 · Jun/2026<br><span id="fb-status" style="font-size:10px">conectando…</span></div>
 </aside>
 
 <div id="gbar" style="position:fixed;top:0;left:220px;right:0;z-index:99;background:var(--bg2);border-bottom:1px solid var(--border2);padding:8px 28px;display:flex;gap:8px;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.06);">
@@ -1911,6 +1914,68 @@ const ADDRS=[];
 for(let c=1;c<=71;c+=2) for(let l of [2,4,6,8,10]) ADDRS.push(`03.033.${String(c).padStart(3,'0')}.${String(l).padStart(2,'0')}`);
 let INV=ADDRS.map(pos=>{const p=REAL[pos];return{pos,qty:p!=null?72:null,peso:p??null,mov:null,st:p!=null?'ok':'pend'};});
 
+/* ═══ FIREBASE (Realtime Database · compat) ════════════════ */
+const firebaseConfig = {
+  apiKey:"AIzaSyAuGxC-8QzRevrnCwacv2TRTJULJrWg92k",
+  authDomain:"controle-de-stretch.firebaseapp.com",
+  // ⚠️ CONFIRME A REGIÃO: se o RTDB foi criado em southamerica-east1, troque a URL abaixo.
+  // Padrão (us-central1):  https://controle-de-stretch-default-rtdb.firebaseio.com
+  // São Paulo (recomendado p/ você): https://controle-de-stretch-default-rtdb.southamerica-east1.firebasedatabase.app
+  databaseURL:"https://controle-de-stretch-default-rtdb.firebaseio.com",
+  projectId:"controle-de-stretch",
+  storageBucket:"controle-de-stretch.firebasestorage.app",
+  messagingSenderId:"750593037876",
+  appId:"1:750593037876:web:63647b6eda686e3101dc61"
+};
+let DB=null, FB_OK=false;
+try{ firebase.initializeApp(firebaseConfig); DB=firebase.database(); FB_OK=true; }
+catch(err){ console.warn('Firebase não inicializou:',err.message); }
+
+// RTDB proíbe . # $ [ ] / em chave — posição 03.033.001.04 vira 03_033_001_04
+function fbKey(pos){return String(pos).replace(/[.#$/[\]]/g,'_');}
+function fbStatus(txt,cor){const el=document.getElementById('fb-status');if(el){el.textContent=txt;el.style.color=cor||'var(--sb-t2)';}}
+
+// grava UMA posição (delta direto no registro, nunca a array inteira)
+function fbSave(d){
+  if(!FB_OK)return;
+  fbStatus('salvando…','var(--orange)');
+  DB.ref('inventario/'+fbKey(d.pos)).set({pos:d.pos,qty:d.qty,peso:d.peso,mov:d.mov,st:d.st})
+    .then(()=>fbStatus('✓ salvo na nuvem','var(--green)'))
+    .catch(e=>fbStatus('✗ erro ao salvar','var(--red)')||console.error(e));
+}
+// grava VÁRIAS posições numa só chamada (usado no import)
+function fbBatch(arr){
+  if(!FB_OK||!arr.length)return;
+  const upd={};arr.forEach(d=>{upd['inventario/'+fbKey(d.pos)]={pos:d.pos,qty:d.qty,peso:d.peso,mov:d.mov,st:d.st};});
+  fbStatus('sincronizando '+arr.length+' posições…','var(--orange)');
+  DB.ref().update(upd)
+    .then(()=>fbStatus('✓ '+arr.length+' salvas na nuvem','var(--green)'))
+    .catch(e=>fbStatus('✗ erro no batch','var(--red)')||console.error(e));
+}
+// carrega da nuvem 1x no início (.once — sem listener ao vivo p/ não recriar bug de auto-sync)
+function fbLoad(){
+  if(!FB_OK){fbStatus('offline · dados locais','var(--sb-t2)');return;}
+  fbStatus('carregando…','var(--orange)');
+  DB.ref('inventario').once('value').then(snap=>{
+    const data=snap.val();
+    if(data){
+      let n=0;
+      Object.values(data).forEach(rec=>{
+        if(!rec||!rec.pos)return;
+        let d=INV.find(x=>x.pos===rec.pos);
+        if(!d){d={pos:rec.pos,qty:null,peso:null,mov:null,st:'pend'};INV.push(d);}
+        if(rec.qty!==undefined)d.qty=rec.qty;
+        if(rec.peso!==undefined)d.peso=rec.peso;
+        if(rec.mov!==undefined)d.mov=rec.mov;
+        d.st=d.peso!=null?'ok':'pend';n++;
+      });
+      rInv();
+      fbStatus('✓ '+n+' posições da nuvem','var(--green)');
+    }else fbStatus('✓ conectado · nuvem vazia','var(--green)');
+  }).catch(e=>{fbStatus('✗ falha ao carregar','var(--red)');console.error(e);});
+}
+
+
 /* ═══ UTILS ═══════════════════════════════════════════════ */
 function sd(d){return d.peso!=null&&d.mov!=null?+(d.peso-d.mov).toFixed(1):d.peso!=null?d.peso:null;}
 function fmt(n,d=1){return n==null?'—':n.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});}
@@ -2149,17 +2214,17 @@ function rInv(){
     <td style="text-align:center">${fmt(fTot.saldo)} kg</td><td></td>`;
   recalcInvKPIs();
 }
-function setMov(pos,val){const d=INV.find(r=>r.pos===pos);if(d){d.mov=val?+parseFloat(val).toFixed(1):null;rInv();}}
+function setMov(pos,val){const d=INV.find(r=>r.pos===pos);if(d){d.mov=val?+parseFloat(val).toFixed(1):null;rInv();fbSave(d);}}
 function salvar(){
   const pos=document.getElementById('n-p').value.trim();if(!pos)return;
   const qty=parseFloat(document.getElementById('n-q').value)||null;
   const peso=parseFloat(document.getElementById('n-pe').value)||null;
   const mov=parseFloat(document.getElementById('n-pm').value)||null;
   let d=INV.find(r=>r.pos===pos);
-  if(!d)INV.push({pos,qty,peso,mov,st:peso?'ok':'pend'});
+  if(!d){d={pos,qty,peso,mov,st:peso?'ok':'pend'};INV.push(d);}
   else{d.qty=qty;d.peso=peso;d.mov=mov;d.st=peso?'ok':'pend';}
   ['n-p','n-q','n-pe','n-pm'].forEach(id=>document.getElementById(id).value='');
-  rInv();
+  rInv();fbSave(d);
 }
 
 /* ═══ APLICADORES ══════════════════════════════════════════ */
@@ -2265,7 +2330,7 @@ function impXL(input){
       const cPeso=findCol(head,'peso estoque','peso est','peso');
       const cMov =findCol(head,'movimentado','peso mov','mov');
       if(cPos<0)throw new Error('Coluna "Posição" não encontrada no cabeçalho.');
-      let upd=0,novas=0,vazias=0;const naoEnc=[];
+      let upd=0,novas=0,vazias=0;const naoEnc=[];const tocadas=[];
       for(let i=1;i<aoa.length;i++){
         const r=aoa[i];if(!r)continue;
         const pos=r[cPos]==null?'':String(r[cPos]).trim();
@@ -2282,8 +2347,9 @@ function impXL(input){
         if(peso!==undefined)d.peso=peso;
         if(mov !==undefined)d.mov =mov;
         d.st=d.peso!=null?'ok':'pend';
+        tocadas.push(d);
       }
-      rInv();
+      rInv();fbBatch(tocadas);
       const box=document.getElementById('imp-msg');
       box.style.background='var(--ok-bg)';box.style.color='var(--ok-txt)';box.style.border='1px solid rgba(45,122,34,.25)';
       box.innerHTML=`✓ Importação concluída · aba <strong>${sheetName}</strong>`+
@@ -2314,6 +2380,7 @@ function recalcInvKPIs(){
 
 /* ═══ INIT ═════════════════════════════════════════════════ */
 rDash();rSolic();rInv();
+fbLoad();
 </script>
 
 
