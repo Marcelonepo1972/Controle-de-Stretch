@@ -69,9 +69,9 @@ tr:hover td{background:var(--bg3)}
 <div class="sidebar">
   <div class="logo"><div class="logo-mark">📦</div><div class="logo-title">Controle de Liberação</div><div class="logo-sub">Stretch & Aplicadores · CD Oba</div></div>
   <div class="nav">
-    <div class="nav-item active" onclick="show('lancar',this)"><span class="ni">➕</span><span>Lançar</span></div>
+    <div class="nav-item" onclick="show('lancar',this)"><span class="ni">➕</span><span>Lançar</span></div>
     <div class="nav-item" onclick="show('lista',this)"><span class="ni">📋</span><span>Lançamentos</span></div>
-    <div class="nav-item" onclick="show('consumo',this)"><span class="ni">📊</span><span>Dashboard</span></div>
+    <div class="nav-item active" onclick="show('consumo',this)"><span class="ni">📊</span><span>Dashboard</span></div>
     <div class="nav-item" onclick="show('bases',this)"><span class="ni">🗂️</span><span>Bases</span></div>
   </div>
   <div class="sb-foot"><span id="fbst" class="fbst">conectando…</span><br>v1.0 · rua 33</div>
@@ -79,7 +79,7 @@ tr:hover td{background:var(--bg3)}
 <div class="main">
 
   <!-- LANCAR -->
-  <div id="pg-lancar" class="page active">
+  <div id="pg-lancar" class="page">
     <div class="ph"><div class="pt">Lançar liberação</div><div class="ps">Tudo em lista suspensa. Quantidade é o único número.</div></div>
     <div class="panel">
       <div class="pl">Área de destino</div>
@@ -127,7 +127,7 @@ tr:hover td{background:var(--bg3)}
   </div>
 
   <!-- DASHBOARD -->
-  <div id="pg-consumo" class="page">
+  <div id="pg-consumo" class="page active">
     <div class="ph"><div class="pt">Dashboard</div><div class="ps">Visão geral da liberação. Filme em kg, aplicador em un, nunca somados.</div></div>
     <div class="cards" id="c-cards"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" id="dash-grid">
@@ -399,9 +399,9 @@ function fbLoad(){
   DB.ref('solicitantes').once('value').then(s=>{if(s.val()&&Array.isArray(s.val())){SOL=s.val();fillSelect('f-sol',SOL,'Selecionar...');}});
   DB.ref('lancamentos').once('value').then(snap=>{const d=snap.val();
     if(d){LANC=Object.values(d).sort((a,b)=>b.ts-a.ts);}
-    fbst('✓ '+LANC.length+' lançamentos','var(--green)');rLista();
+    fbst('✓ '+LANC.length+' lançamentos','var(--green)');rLista();rConsumo();
   }).catch(()=>fbst('✗ falha ao carregar','var(--red)'));
 }
-initForm();fbLoad();
+initForm();rConsumo();fbLoad();
 </script>
 </body></html>
