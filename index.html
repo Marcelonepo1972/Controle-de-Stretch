@@ -163,6 +163,37 @@ tr:hover td{background:var(--bg3)}
 </div>
 <div id="toast" class="toast"></div>
 
+<!-- MODAL EDIÇÃO -->
+<div id="modal" style="display:none;position:fixed;inset:0;background:rgba(20,30,15,.45);z-index:300;align-items:center;justify-content:center;padding:18px">
+  <div style="background:#fff;border-radius:14px;max-width:640px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-size:16px;font-weight:600">Editar lançamento</div><div id="m-info" style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace"></div></div>
+      <button class="btn sm" onclick="fecharModal()">✕ Fechar</button>
+    </div>
+    <div style="padding:22px">
+      <div class="fg" style="margin-bottom:12px"><div class="fl">Área de destino</div><select id="m-dest"></select>
+        <div id="m-centro" class="centro-box" style="margin-top:8px"></div></div>
+      <div class="row">
+        <div class="fg"><div class="fl">Material</div><select id="m-mat" onchange="mOnMat()"></select></div>
+        <div class="fg"><div class="fl">Quantidade <span id="m-un" class="mono" style="color:var(--text3)"></span></div><input type="number" id="m-qty" step="0.1"></div>
+        <div class="fg"><div class="fl">Data</div><input type="date" id="m-data"></div>
+      </div>
+      <div class="row">
+        <div class="fg"><div class="fl">Solicitante</div><select id="m-sol"></select></div>
+        <div class="fg"><div class="fl">Endereço</div>
+          <input type="text" id="m-endfil" placeholder="Filtrar..." oninput="mFiltEnd()" style="margin-bottom:6px">
+          <select id="m-end"></select></div>
+        <div class="fg"><div class="fl">Observação</div><input type="text" id="m-obs"></div>
+      </div>
+      <div class="bar" style="margin-top:8px">
+        <button class="btn primary" onclick="salvarEdit()">Salvar alterações</button>
+        <button class="btn" onclick="fecharModal()">Cancelar</button>
+        <button class="btn danger" onclick="excluir(modalId);fecharModal()" style="margin-left:auto">Excluir lançamento</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 const M = {"ends": ["03.033.01.02.01", "03.033.01.04.01", "03.033.01.06.01", "03.033.01.08.01", "03.033.01.10.01", "03.033.03.02.01", "03.033.03.04.01", "03.033.03.06.01", "03.033.03.08.01", "03.033.03.10.01", "03.033.05.02.01", "03.033.05.04.01", "03.033.05.06.01", "03.033.05.08.01", "03.033.05.10.01", "03.033.07.02.01", "03.033.07.04.01", "03.033.07.06.01", "03.033.07.08.01", "03.033.07.10.01", "03.033.09.02.01", "03.033.09.04.01", "03.033.09.06.01", "03.033.09.08.01", "03.033.09.10.01", "03.033.11.02.01", "03.033.11.04.01", "03.033.11.06.01", "03.033.11.08.01", "03.033.11.10.01", "03.033.13.02.01", "03.033.13.04.01", "03.033.13.06.01", "03.033.13.08.01", "03.033.13.10.01", "03.033.15.02.01", "03.033.15.04.01", "03.033.15.06.01", "03.033.15.08.01", "03.033.15.10.01", "03.033.17.02.01", "03.033.17.04.01", "03.033.17.06.01", "03.033.17.08.01", "03.033.17.10.01", "03.033.19.02.01", "03.033.19.04.01", "03.033.19.06.01", "03.033.19.08.01", "03.033.19.10.01", "03.033.21.02.01", "03.033.21.04.01", "03.033.21.06.01", "03.033.21.08.01", "03.033.21.10.01", "03.033.23.02.01", "03.033.23.04.01", "03.033.23.06.01", "03.033.23.08.01", "03.033.23.10.01", "03.033.25.02.01", "03.033.25.04.01", "03.033.25.06.01", "03.033.25.08.01", "03.033.25.10.01", "03.033.27.02.01", "03.033.27.04.01", "03.033.27.06.01", "03.033.27.08.01", "03.033.27.10.01", "03.033.29.02.01", "03.033.29.04.01", "03.033.29.06.01", "03.033.29.08.01", "03.033.29.10.01", "03.033.31.02.01", "03.033.31.04.01", "03.033.31.06.01", "03.033.31.08.01", "03.033.31.10.01", "03.033.33.02.01", "03.033.33.04.01", "03.033.33.06.01", "03.033.33.08.01", "03.033.33.10.01", "03.033.35.02.01", "03.033.35.04.01", "03.033.35.06.01", "03.033.35.08.01", "03.033.35.10.01", "03.033.37.02.01", "03.033.37.04.01", "03.033.37.06.01", "03.033.37.08.01", "03.033.37.10.01", "03.033.39.02.01", "03.033.39.04.01", "03.033.39.06.01", "03.033.39.08.01", "03.033.39.10.01", "03.033.41.02.01", "03.033.41.04.01", "03.033.41.06.01", "03.033.41.08.01", "03.033.41.10.01", "03.033.43.02.01", "03.033.43.04.01", "03.033.43.06.01", "03.033.43.08.01", "03.033.43.10.01", "03.033.45.02.01", "03.033.45.04.01", "03.033.45.06.01", "03.033.45.08.01", "03.033.45.10.01", "03.033.47.02.01", "03.033.47.04.01", "03.033.47.06.01", "03.033.47.08.01", "03.033.47.10.01", "03.033.49.02.01", "03.033.49.04.01", "03.033.49.06.01", "03.033.49.08.01", "03.033.49.10.01", "03.033.51.02.01", "03.033.51.04.01", "03.033.51.06.01", "03.033.51.08.01", "03.033.51.10.01", "03.033.53.02.01", "03.033.53.04.01", "03.033.53.06.01", "03.033.53.08.01", "03.033.53.10.01", "03.033.55.02.01", "03.033.55.04.01", "03.033.55.06.01", "03.033.55.08.01", "03.033.55.10.01", "03.033.57.02.01", "03.033.57.04.01", "03.033.57.06.01", "03.033.57.08.01", "03.033.57.10.01", "03.033.59.02.01", "03.033.59.04.01", "03.033.59.06.01", "03.033.59.08.01", "03.033.59.10.01", "03.033.61.02.01", "03.033.61.04.01", "03.033.61.06.01", "03.033.61.08.01", "03.033.61.10.01", "03.033.63.02.01", "03.033.63.04.01", "03.033.63.06.01", "03.033.63.08.01", "03.033.63.10.01", "03.033.65.02.01", "03.033.65.04.01", "03.033.65.06.01", "03.033.65.08.01", "03.033.65.10.01", "03.033.67.02.01", "03.033.67.04.01", "03.033.67.06.01", "03.033.67.08.01", "03.033.67.10.01", "03.033.69.02.01", "03.033.69.04.01", "03.033.69.06.01", "03.033.69.08.01", "03.033.69.10.01", "03.033.71.02.01", "03.033.71.04.01", "03.033.71.06.01", "03.033.71.08.01", "03.033.71.10.01", "03.033.73.02.01", "03.033.73.04.01", "03.033.73.06.01", "03.033.73.08.01", "03.033.73.10.01", "03.033.75.02.01", "03.033.75.04.01", "03.033.75.06.01", "03.033.75.08.01", "03.033.75.10.01", "03.033.77.02.01", "03.033.77.04.01", "03.033.77.06.01", "03.033.77.08.01", "03.033.77.10.01", "03.033.79.02.01", "03.033.79.04.01", "03.033.79.06.01", "03.033.79.08.01", "03.033.79.10.01", "03.033.81.02.01", "03.033.81.04.01", "03.033.81.06.01", "03.033.81.08.01", "03.033.81.10.01"], "sol": ["Alex Darci", "Anderson Souza", "Antônio Teixeira", "Carlos Marcelo", "Diogo Lucas", "Elton de Souza", "Fabiano Farias", "Faustino Reis", "Francisco Wesley", "Hobede Pinheiros", "Jefferson Rouxinol", "João de Lana", "Josimar Lima", "Jucivania Dantas", "Leandro Ferreira", "Lucas Honathan", "Melquisedeque", "Railton Santana", "Reginaldo Farias", "Renildo Britto", "Rodrigo Fernandes", "Rogério Souza", "Ronivon Santos", "Wagner Carlos", "Yasser Carvalho"], "mat": [{"cod": 228752, "nome": "Filme Eco Stretch", "un": "KG", "cor": null}, {"cod": 236566, "nome": "Aplicador Amarelo", "un": "UN", "cor": "#f5a623"}, {"cod": 236567, "nome": "Aplicador Laranja", "un": "UN", "cor": "#e85d04"}, {"cod": 236568, "nome": "Aplicador Azul", "un": "UN", "cor": "#1565c0"}, {"cod": 236569, "nome": "Aplicador Verde", "un": "UN", "cor": "#2d7a22"}], "cen": [{"destino": "Expedição FLV", "cod": 342010, "nome": "Logística FLV"}, {"destino": "Recebimento FLV", "cod": 342010, "nome": "Logística FLV"}, {"destino": "Expedição Mercearia", "cod": 342011, "nome": "Logística Mercearia"}, {"destino": "Recebimento Mercearia", "cod": 342011, "nome": "Logística Mercearia"}, {"destino": "Perecível", "cod": 342001, "nome": "Logística Perecíveis"}, {"destino": "Reversa", "cod": 342004, "nome": "Logística Reversa"}]};
 const FBCFG = {"apiKey": "AIzaSyAuGxC-8QzRevrnCwacv2TRTJULJrWg92k", "authDomain": "controle-de-stretch.firebaseapp.com", "databaseURL": "https://controle-de-stretch-default-rtdb.firebaseio.com", "projectId": "controle-de-stretch", "storageBucket": "controle-de-stretch.firebasestorage.app", "messagingSenderId": "750593037876", "appId": "1:750593037876:web:63647b6eda686e3101dc61"};
@@ -235,14 +266,45 @@ function rLista(){
     <td style="white-space:nowrap"><button class="btn sm" onclick="editar('${r.id}')">✎</button> <button class="btn sm danger" onclick="excluir('${r.id}')">✕</button></td>
   </tr>`).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px">Nenhum lançamento ainda.</td></tr>';
 }
-function editar(id){const r=LANC.find(x=>x.id===id);if(!r)return;editId=id;
-  document.querySelector('.nav-item').click();
-  const chip=[...document.querySelectorAll('#chips-dest .chip')].find(c=>c.textContent===r.destino);if(chip)selDest(chip,r.destino);
-  document.getElementById('f-mat').value=r.matNome;onMat();
-  document.getElementById('f-qty').value=r.qty;document.getElementById('f-data').value=r.data;
-  document.getElementById('f-sol').value=r.solicitante;renderEnd(M.ends);document.getElementById('f-end').value=r.endereco;
-  document.getElementById('f-obs').value=r.obs||'';document.getElementById('edit-flag').style.display='inline';
-  window.scrollTo(0,0);
+let modalId=null;
+function editar(id){const r=LANC.find(x=>x.id===id);if(!r)return;modalId=id;
+  document.getElementById('m-info').textContent='id '+r.id+(r.obs==='histórico'?' · histórico':'');
+  // destino
+  document.getElementById('m-dest').innerHTML=M.cen.map(c=>`<option ${c.destino===r.destino?'selected':''}>${c.destino}</option>`).join('');
+  document.getElementById('m-dest').onchange=mOnDest;mOnDest();
+  // material
+  document.getElementById('m-mat').innerHTML=M.mat.map(m=>`<option ${m.nome===r.matNome?'selected':''}>${m.nome}</option>`).join('');
+  mOnMat();document.getElementById('m-qty').value=r.qty;document.getElementById('m-data').value=r.data;
+  // solicitante (inclui o atual mesmo se fora da base)
+  let sol=[...SOL];if(r.solicitante&&!sol.includes(r.solicitante))sol.unshift(r.solicitante);
+  document.getElementById('m-sol').innerHTML=sol.map(n=>`<option ${n===r.solicitante?'selected':''}>${n}</option>`).join('');
+  // endereço (inclui o antigo mesmo fora da lista nova)
+  mRenderEnd(M.ends,r.endereco);
+  document.getElementById('m-obs').value=r.obs||'';
+  document.getElementById('modal').style.display='flex';
+}
+function mOnDest(){const d=document.getElementById('m-dest').value;const c=M.cen.find(x=>x.destino===d);
+  document.getElementById('m-centro').textContent=`Centro de custo: ${c.cod} · ${c.nome}`;}
+function mOnMat(){const m=matByNome(document.getElementById('m-mat').value);
+  document.getElementById('m-un').textContent=m?'('+m.un+')':'';}
+function mRenderEnd(arr,cur){let opts=[...arr];if(cur&&!opts.includes(cur))opts.unshift(cur);
+  document.getElementById('m-end').innerHTML=opts.map(e=>`<option ${e===cur?'selected':''}>${e}</option>`).join('');}
+function mFiltEnd(){const q=document.getElementById('m-endfil').value.replace(/\s/g,'');const cur=document.getElementById('m-end').value;
+  mRenderEnd(M.ends.filter(e=>e.includes(q)),cur);}
+function fecharModal(){document.getElementById('modal').style.display='none';modalId=null;}
+function salvarEdit(){
+  const r=LANC.find(x=>x.id===modalId);if(!r)return;
+  const dest=document.getElementById('m-dest').value,mat=document.getElementById('m-mat').value,
+    qty=parseFloat(document.getElementById('m-qty').value),end=document.getElementById('m-end').value;
+  if(!qty){alert('Quantidade inválida.');return;}
+  const m=matByNome(mat),c=M.cen.find(x=>x.destino===dest);
+  Object.assign(r,{destino:dest,matNome:mat,matCod:m.cod,un:m.un,qty,
+    centroCod:c.cod,centroNome:c.nome,
+    solicitante:document.getElementById('m-sol').value,
+    endereco:end,data:document.getElementById('m-data').value,
+    obs:document.getElementById('m-obs').value.trim()});
+  if(FB_OK)DB.ref('lancamentos/'+r.id).set(r);
+  fecharModal();rLista();toast('Lançamento atualizado');
 }
 function excluir(id){if(!confirm('Excluir este lançamento? O endereço fica livre para relançar.'))return;
   LANC=LANC.filter(x=>x.id!==id);if(FB_OK)DB.ref('lancamentos/'+id).remove();rLista();toast('Lançamento excluído');}
