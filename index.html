@@ -71,7 +71,7 @@ tr:hover td{background:var(--bg3)}
   <div class="nav">
     <div class="nav-item active" onclick="show('lancar',this)"><span class="ni">➕</span><span>Lançar</span></div>
     <div class="nav-item" onclick="show('lista',this)"><span class="ni">📋</span><span>Lançamentos</span></div>
-    <div class="nav-item" onclick="show('consumo',this)"><span class="ni">📊</span><span>Consumo</span></div>
+    <div class="nav-item" onclick="show('consumo',this)"><span class="ni">📊</span><span>Dashboard</span></div>
     <div class="nav-item" onclick="show('bases',this)"><span class="ni">🗂️</span><span>Bases</span></div>
   </div>
   <div class="sb-foot"><span id="fbst" class="fbst">conectando…</span><br>v1.0 · rua 33</div>
@@ -126,11 +126,25 @@ tr:hover td{background:var(--bg3)}
     </div>
   </div>
 
-  <!-- CONSUMO -->
+  <!-- DASHBOARD -->
   <div id="pg-consumo" class="page">
-    <div class="ph"><div class="pt">Consumo liberado</div><div class="ps">Filme em kg, aplicador em unidade. Nunca somados.</div></div>
+    <div class="ph"><div class="pt">Dashboard</div><div class="ps">Visão geral da liberação. Filme em kg, aplicador em un, nunca somados.</div></div>
     <div class="cards" id="c-cards"></div>
-    <div class="panel"><div class="pl">Por área</div><div style="overflow:auto"><table><thead><tr><th>Área</th><th>Filme (kg)</th><th>Aplicador (un)</th><th>Lançamentos</th></tr></thead><tbody id="c-area"></tbody></table></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" id="dash-grid">
+      <div class="panel">
+        <div class="pl">Progresso por área · % do volume de filme</div>
+        <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+          <div id="donut" style="flex-shrink:0"></div>
+          <div id="donut-leg" style="flex:1;min-width:200px;font-size:13px"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="pl">Volume por destino · kg de filme</div>
+        <div id="bars-dest"></div>
+        <div class="pl" style="margin-top:18px">Aplicadores · unidades</div>
+        <div id="bars-aplic"></div>
+      </div>
+    </div>
     <div class="panel"><div class="pl">Por solicitante</div><div style="overflow:auto"><table><thead><tr><th>Solicitante</th><th>Filme (kg)</th><th>Aplicador (un)</th></tr></thead><tbody id="c-sol"></tbody></table></div></div>
   </div>
 
@@ -233,20 +247,64 @@ function editar(id){const r=LANC.find(x=>x.id===id);if(!r)return;editId=id;
 function excluir(id){if(!confirm('Excluir este lançamento? O endereço fica livre para relançar.'))return;
   LANC=LANC.filter(x=>x.id!==id);if(FB_OK)DB.ref('lancamentos/'+id).remove();rLista();toast('Lançamento excluído');}
 
+const DEST_COR={'Expedição FLV':'#2d7a22','Recebimento FLV':'#7b3fa0','Expedição Mercearia':'#e85d04','Recebimento Mercearia':'#1565c0','Reversa':'#f5a623','Perecível':'#c62828'};
+const APLIC_COR={'Aplicador Amarelo':'#f5a623','Aplicador Verde':'#2d7a22','Aplicador Azul':'#1565c0','Aplicador Laranja':'#e85d04'};
+const CUSTO={228752:17.2802,236566:7.9023,236567:7.9023,236568:7.9023,236569:7.9023};
+const custoUnit=cod=>CUSTO[cod]||0;
+
 function rConsumo(){
-  const byA={},byS={};let kg=0,un=0;
+  const byA={},byS={},byMat={};let kg=0,un=0,custo=0;
   M.cen.forEach(c=>byA[c.destino]={kg:0,un:0,n:0});
   LANC.forEach(r=>{const a=byA[r.destino]||(byA[r.destino]={kg:0,un:0,n:0});a.n++;
+    custo+=r.qty*custoUnit(r.matCod);
     if(isFilme(r.matNome)){a.kg+=r.qty;kg+=r.qty;}else{a.un+=r.qty;un+=r.qty;}
+    byMat[r.matNome]=(byMat[r.matNome]||0)+r.qty;
     const s=byS[r.solicitante]||(byS[r.solicitante]={kg:0,un:0});
     if(isFilme(r.matNome))s.kg+=r.qty;else s.un+=r.qty;});
+
   document.getElementById('c-cards').innerHTML=`
     <div class="mc"><div class="l">Filme liberado</div><div class="v g">${fmt(kg)}<span style="font-size:13px"> kg</span></div></div>
     <div class="mc"><div class="l">Aplicador liberado</div><div class="v o">${fmt(un,0)}<span style="font-size:13px"> un</span></div></div>
-    <div class="mc"><div class="l">Lançamentos</div><div class="v">${LANC.length}</div></div>
-    <div class="mc"><div class="l">Áreas ativas</div><div class="v">${Object.values(byA).filter(a=>a.n>0).length}</div></div>`;
-  document.getElementById('c-area').innerHTML=Object.entries(byA).sort((a,b)=>b[1].kg-a[1].kg)
-    .map(([k,v])=>`<tr><td>${k}</td><td class="mono">${fmt(v.kg)}</td><td class="mono">${fmt(v.un,0)}</td><td class="mono">${v.n}</td></tr>`).join('');
+    <div class="mc"><div class="l">Custo total</div><div class="v" style="font-size:19px">R$ ${fmt(custo,2)}</div><div class="h">filme + aplicador</div></div>
+    <div class="mc"><div class="l">Lançamentos</div><div class="v">${LANC.length}</div><div class="h">${Object.values(byA).filter(a=>a.n>0).length} áreas ativas</div></div>`;
+
+  // rosca por área (kg de filme)
+  const af=Object.entries(byA).filter(([k,v])=>v.kg>0).sort((a,b)=>b[1].kg-a[1].kg);
+  const totKg=af.reduce((s,[,v])=>s+v.kg,0)||1;
+  const R=78,C=2*Math.PI*R;let off=0;let arcs='';
+  af.forEach(([k,v])=>{const frac=v.kg/totKg;const len=frac*C;const col=DEST_COR[k]||'#999';
+    arcs+=`<circle cx="95" cy="95" r="${R}" fill="none" stroke="${col}" stroke-width="22" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 95 95)"/>`;off+=len;});
+  document.getElementById('donut').innerHTML=`<svg width="190" height="190" viewBox="0 0 190 190">${arcs}
+    <text x="95" y="90" text-anchor="middle" font-family="DM Mono" font-size="22" font-weight="600" fill="#1a2214">${fmt(totKg,0)}</text>
+    <text x="95" y="108" text-anchor="middle" font-size="11" fill="#8a9e7e">kg de filme</text></svg>`;
+  const med=['🥇','🥈','🥉'];
+  document.getElementById('donut-leg').innerHTML=af.map(([k,v],i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0">
+      <span style="width:11px;height:11px;border-radius:3px;background:${DEST_COR[k]}"></span>
+      <span style="width:20px">${med[i]||'#'+(i+1)}</span>
+      <span style="flex:1">${k}</span>
+      <span class="mono" style="font-weight:600">${fmt(v.kg)} kg</span>
+      <span class="mono" style="color:#8a9e7e;width:46px;text-align:right">${(v.kg/totKg*100).toFixed(1)}%</span>
+    </div>`).join('');
+
+  // barras por destino
+  const maxKg=af.length?af[0][1].kg:1;
+  document.getElementById('bars-dest').innerHTML=af.map(([k,v])=>`
+    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px">
+      <span style="width:150px">${k}</span>
+      <div style="flex:1;background:#eef1ea;border-radius:5px;height:14px;overflow:hidden"><div style="width:${v.kg/maxKg*100}%;height:100%;background:${DEST_COR[k]}"></div></div>
+      <span class="mono" style="width:78px;text-align:right;font-weight:600">${fmt(v.kg)} kg</span>
+    </div>`).join('');
+  // barras aplicador
+  const ap=Object.entries(byMat).filter(([k])=>!isFilme(k)).sort((a,b)=>b[1]-a[1]);
+  const maxUn=ap.length?ap[0][1]:1;
+  document.getElementById('bars-aplic').innerHTML=ap.map(([k,v])=>`
+    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px">
+      <span style="width:150px">${k.replace('Aplicador ','')}</span>
+      <div style="flex:1;background:#eef1ea;border-radius:5px;height:14px;overflow:hidden"><div style="width:${v/maxUn*100}%;height:100%;background:${APLIC_COR[k]||'#999'}"></div></div>
+      <span class="mono" style="width:78px;text-align:right;font-weight:600">${fmt(v,0)} un</span>
+    </div>`).join('')||'<div style="color:#8a9e7e;font-size:12px">Sem aplicadores no período.</div>';
+
   document.getElementById('c-sol').innerHTML=Object.entries(byS).sort((a,b)=>b[1].kg-a[1].kg)
     .map(([k,v])=>`<tr><td>${k}</td><td class="mono">${fmt(v.kg)}</td><td class="mono">${fmt(v.un,0)}</td></tr>`).join('')||'<tr><td colspan="3" style="color:var(--text3)">Sem dados.</td></tr>';
 }
