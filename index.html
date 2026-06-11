@@ -114,8 +114,11 @@ tr:hover td{background:var(--bg3)}
     <div class="ph"><div class="pt">Lançamentos</div><div class="ps">Endereço ou nome errado? Edite ou exclua aqui.</div></div>
     <div class="panel">
       <div class="bar">
-        <input type="text" id="l-busca" placeholder="Buscar..." oninput="rLista()" style="width:180px">
+        <input type="text" id="l-busca" placeholder="Buscar..." oninput="rLista()" style="width:150px">
         <select id="l-dest" onchange="rLista()" style="width:auto"><option value="">Todas as áreas</option></select>
+        <span style="font-size:12px;color:var(--text3)">de</span><input type="date" id="l-de" onchange="rLista()" style="width:auto">
+        <span style="font-size:12px;color:var(--text3)">até</span><input type="date" id="l-ate" onchange="rLista()" style="width:auto">
+        <button class="btn sm" onclick="limparFiltro()">limpar</button>
         <button class="btn sm" onclick="exportar()">⬇ Exportar período (.xlsx)</button>
         <span style="margin-left:auto;font-size:12px;color:var(--text3)" id="l-count"></span>
       </div>
@@ -252,10 +255,18 @@ function limpar(){['f-qty','f-obs','f-endfil'].forEach(id=>document.getElementBy
   document.querySelectorAll('#chips-dest .chip').forEach(c=>c.classList.remove('sel'));destSel='';
   document.getElementById('centro-box').style.display='none';}
 
+function filtrarLanc(){
+  const q=(document.getElementById('l-busca').value||'').toLowerCase();
+  const fd=document.getElementById('l-dest').value;
+  const de=document.getElementById('l-de').value, ate=document.getElementById('l-ate').value;
+  return LANC.filter(r=>(!fd||r.destino===fd)
+    && (!q||JSON.stringify(r).toLowerCase().includes(q))
+    && (!de||r.data>=de) && (!ate||r.data<=ate));
+}
+function limparFiltro(){['l-busca','l-de','l-ate'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('l-dest').value='';rLista();}
 function rLista(){
-  const q=(document.getElementById('l-busca').value||'').toLowerCase();const fd=document.getElementById('l-dest').value;
-  const rows=LANC.filter(r=>(!fd||r.destino===fd)&&(!q||JSON.stringify(r).toLowerCase().includes(q)))
-    .sort((a,b)=>b.ts-a.ts);
+  const rows=filtrarLanc().sort((a,b)=>b.ts-a.ts);
   document.getElementById('l-count').textContent=rows.length+' lançamento(s)';
   document.getElementById('l-body').innerHTML=rows.map(r=>`<tr>
     <td class="mono">${r.data.split('-').reverse().join('/')}</td>
@@ -384,8 +395,7 @@ function addSol(){const v=document.getElementById('b-novo').value.trim();if(!v)r
 function delSol(i){if(!confirm('Remover '+SOL[i]+' da base?'))return;SOL.splice(i,1);fillSelect('f-sol',SOL,'Selecionar...');rBases();if(FB_OK)DB.ref('solicitantes').set(SOL);}
 
 function exportar(){
-  const fd=document.getElementById('l-dest').value;
-  const rows=LANC.filter(r=>!fd||r.destino===fd).sort((a,b)=>a.ts-b.ts);
+  const rows=filtrarLanc().sort((a,b)=>a.ts-b.ts);
   const aoa=[['Data','Codigo','Material','Qtd','Un','Destino','Centro_Custo','Centro_Nome','Solicitante','Endereco','Obs']];
   rows.forEach(r=>aoa.push([r.data,r.matCod,r.matNome,r.qty,r.un,r.destino,r.centroCod,r.centroNome,r.solicitante,r.endereco,r.obs||'']));
   const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),'Liberacoes');
