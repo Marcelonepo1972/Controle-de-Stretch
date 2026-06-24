@@ -132,6 +132,14 @@ tr:hover td{background:var(--bg3)}
   <!-- DASHBOARD -->
   <div id="pg-consumo" class="page active">
     <div class="ph"><div class="pt">Dashboard</div><div class="ps">Visão geral da liberação. Filme em kg, aplicador em un, nunca somados.</div></div>
+    <div class="panel" style="padding:12px 16px">
+      <div class="bar" style="margin-bottom:0">
+        <span style="font-size:12px;color:var(--text3)">Período · de</span><input type="date" id="c-de" onchange="rConsumo()" style="width:auto">
+        <span style="font-size:12px;color:var(--text3)">até</span><input type="date" id="c-ate" onchange="rConsumo()" style="width:auto">
+        <button class="btn sm" onclick="limparPeriodo()">limpar</button>
+        <span style="margin-left:auto;font-size:12px;color:var(--text3)" id="c-periodo"></span>
+      </div>
+    </div>
     <div class="cards" id="c-cards"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" id="dash-grid">
       <div class="panel">
@@ -160,6 +168,18 @@ tr:hover td{background:var(--bg3)}
       <div id="b-sollist" style="display:flex;flex-wrap:wrap;gap:7px"></div>
     </div>
     <div class="panel"><div class="pl">Amarração centro ↔ destino</div><div style="overflow:auto"><table><thead><tr><th>Destino</th><th>Centro custo</th><th>Centro nome</th></tr></thead><tbody id="b-cen"></tbody></table></div></div>
+    <div class="panel">
+      <div class="pl">Custo dos materiais · por data da nota</div>
+      <div class="ps" style="margin-bottom:12px;color:var(--orange)">Custo novo? Adicione uma faixa com a data da nota. Não apague as antigas, senão o histórico é revalorizado pelo preço novo.</div>
+      <div class="bar">
+        <select id="cu-mat" style="width:auto"></select>
+        <span style="font-size:12px;color:var(--text3)">a partir de</span><input type="date" id="cu-data" style="width:auto">
+        <input type="number" id="cu-val" step="0.0001" placeholder="custo ex: 34,4331" style="width:150px">
+        <input type="text" id="cu-doc" placeholder="nº nota (opcional)" style="width:150px">
+        <button class="btn sm primary" onclick="addCusto()">+ Adicionar faixa</button>
+      </div>
+      <div style="overflow:auto"><table><thead><tr><th>Material</th><th>A partir de</th><th>Custo (R$)</th><th>Nota</th><th></th></tr></thead><tbody id="cu-body"></tbody></table></div>
+    </div>
     <div class="panel"><div class="pl">Endereços (<span id="b-endc"></span>) · rua 33 lado ímpar</div><div class="ps" id="b-endrange" style="margin-bottom:8px"></div><div class="pl">Materiais</div><div id="b-mat" style="display:flex;flex-wrap:wrap;gap:8px"></div></div>
   </div>
 
@@ -324,7 +344,7 @@ const DEST_COR={'Expedição FLV':'#2d7a22','Recebimento FLV':'#7b3fa0','Expedi�
 const APLIC_COR={'Aplicador Amarelo':'#f5a623','Aplicador Verde':'#2d7a22','Aplicador Azul':'#1565c0','Aplicador Laranja':'#e85d04'};
 // Custo por código + data de vigência (data da nota/entrega). Cada faixa vale a partir de 'de'.
 // Atualizar aqui sempre que entrar nota nova: basta acrescentar {de:'AAAA-MM-DD', v:custo, doc:'nota'}.
-const CUSTO_HIST={
+let CUSTO_HIST={
   228752:[ // Filme Eco Stretch · fornecedor 3488422 VALGROUP
     {de:'2026-02-24', v:17.2802, doc:'5327'},
     {de:'2026-04-29', v:25.7915, doc:'9814'},
@@ -345,10 +365,20 @@ function custoUnit(cod,data){
 }
 function custoAtual(cod){const h=CUSTO_HIST[cod];return h?h[h.length-1].v:0;}
 
+function dashLanc(){
+  const de=(document.getElementById('c-de')||{}).value, ate=(document.getElementById('c-ate')||{}).value;
+  return LANC.filter(r=>(!de||r.data>=de)&&(!ate||r.data<=ate));
+}
+function limparPeriodo(){const de=document.getElementById('c-de'),ate=document.getElementById('c-ate');if(de)de.value='';if(ate)ate.value='';rConsumo();}
+
 function rConsumo(){
+  const DL=dashLanc();
+  const de=(document.getElementById('c-de')||{}).value, ate=(document.getElementById('c-ate')||{}).value;
+  const pl=document.getElementById('c-periodo');
+  if(pl)pl.textContent=(de||ate)?`${DL.length} no período`:`${DL.length} lançamentos (tudo)`;
   const byA={},byS={},byMat={};let kg=0,un=0,custo=0;
   M.cen.forEach(c=>byA[c.destino]={kg:0,un:0,n:0});
-  LANC.forEach(r=>{const a=byA[r.destino]||(byA[r.destino]={kg:0,un:0,n:0});a.n++;
+  DL.forEach(r=>{const a=byA[r.destino]||(byA[r.destino]={kg:0,un:0,n:0});a.n++;
     custo+=r.qty*custoUnit(r.matCod,r.data);
     if(isFilme(r.matNome)){a.kg+=r.qty;kg+=r.qty;}else{a.un+=r.qty;un+=r.qty;}
     byMat[r.matNome]=(byMat[r.matNome]||0)+r.qty;
@@ -359,7 +389,7 @@ function rConsumo(){
     <div class="mc"><div class="l">Filme liberado</div><div class="v g">${fmt(kg)}<span style="font-size:13px"> kg</span></div></div>
     <div class="mc"><div class="l">Aplicador liberado</div><div class="v o">${fmt(un,0)}<span style="font-size:13px"> un</span></div></div>
     <div class="mc"><div class="l">Custo total</div><div class="v" style="font-size:19px">R$ ${fmt(custo,2)}</div><div class="h">por data da nota · filme atual R$ ${fmt(custoAtual(228752),4)}/kg</div></div>
-    <div class="mc"><div class="l">Lançamentos</div><div class="v">${LANC.length}</div><div class="h">${Object.values(byA).filter(a=>a.n>0).length} áreas ativas</div></div>`;
+    <div class="mc"><div class="l">Lançamentos</div><div class="v">${DL.length}</div><div class="h">${Object.values(byA).filter(a=>a.n>0).length} áreas ativas</div></div>`;
 
   // rosca por área (kg de filme)
   const af=Object.entries(byA).filter(([k,v])=>v.kg>0).sort((a,b)=>b[1].kg-a[1].kg);
@@ -409,7 +439,46 @@ function rBases(){
   document.getElementById('b-endc').textContent=M.ends.length;
   document.getElementById('b-endrange').textContent=M.ends[0]+' até '+M.ends[M.ends.length-1];
   document.getElementById('b-mat').innerHTML=M.mat.map(m=>`<span class="chip">${m.nome} · ${m.cod} · ${m.un}</span>`).join('');
+  rCusto();
 }
+
+function fillCustoMat(){const s=document.getElementById('cu-mat');if(s)s.innerHTML=M.mat.map(m=>`<option value="${m.cod}">${m.nome} · ${m.cod}</option>`).join('');}
+function rCusto(){
+  const body=document.getElementById('cu-body');if(!body)return;
+  body.innerHTML=M.mat.map(m=>{
+    const h=(CUSTO_HIST[m.cod]||[]).slice().sort((a,b)=>a.de<b.de?-1:1);
+    const last=h.length?h[h.length-1].de:null;
+    return h.map(f=>`<tr>
+      <td>${m.nome}${f.de===last?' <span class="bdg f">atual</span>':''}</td>
+      <td class="mono">${f.de.split('-').reverse().join('/')}</td>
+      <td class="mono">${fmt(f.v,4)}</td>
+      <td class="mono" style="color:var(--text3)">${f.doc||''}</td>
+      <td><button class="btn sm danger" onclick="delCusto(${m.cod},'${f.de}')">✕</button></td>
+    </tr>`).join('');
+  }).join('')||'<tr><td colspan="5" style="color:var(--text3)">Sem custos cadastrados.</td></tr>';
+}
+function addCusto(){
+  const cod=parseInt(document.getElementById('cu-mat').value);
+  const de=document.getElementById('cu-data').value;
+  const v=parseFloat(document.getElementById('cu-val').value);
+  const doc=document.getElementById('cu-doc').value.trim();
+  if(!cod||!de||!v){alert('Material, data e custo são obrigatórios.');return;}
+  if(!CUSTO_HIST[cod])CUSTO_HIST[cod]=[];
+  const arr=CUSTO_HIST[cod].filter(f=>f.de!==de); // mesma data substitui
+  arr.push({de,v,doc});arr.sort((a,b)=>a.de<b.de?-1:1);
+  CUSTO_HIST[cod]=arr;
+  saveCusto();rCusto();rConsumo();
+  document.getElementById('cu-val').value='';document.getElementById('cu-doc').value='';
+  toast('Faixa de custo adicionada');
+}
+function delCusto(cod,de){
+  const arr=CUSTO_HIST[cod]||[];
+  if(arr.length<=1){alert('Não dá pra apagar a única faixa do material. Adicione outra antes.');return;}
+  if(!confirm('Remover a faixa de '+de.split('-').reverse().join('/')+'? O consumo desse período passa a usar o custo da faixa anterior.'))return;
+  CUSTO_HIST[cod]=arr.filter(f=>f.de!==de);
+  saveCusto();rCusto();rConsumo();toast('Faixa removida');
+}
+function saveCusto(){if(FB_OK){fbst('salvando custo…','var(--orange)');DB.ref('custos').set(CUSTO_HIST).then(()=>fbst('✓ custo salvo','var(--green)')).catch(()=>fbst('✗ erro custo','var(--red)'));}}
 function addSol(){const v=document.getElementById('b-novo').value.trim();if(!v)return;if(!SOL.includes(v))SOL.push(v);
   document.getElementById('b-novo').value='';fillSelect('f-sol',SOL,'Selecionar...');rBases();if(FB_OK)DB.ref('solicitantes').set(SOL);toast('Solicitante adicionado');}
 function delSol(i){if(!confirm('Remover '+SOL[i]+' da base?'))return;SOL.splice(i,1);fillSelect('f-sol',SOL,'Selecionar...');rBases();if(FB_OK)DB.ref('solicitantes').set(SOL);}
@@ -427,11 +496,16 @@ function fbLoad(){
   if(!FB_OK){fbst('offline · dados locais');return;}
   fbst('carregando…','var(--orange)');
   DB.ref('solicitantes').once('value').then(s=>{if(s.val()&&Array.isArray(s.val())){SOL=s.val();fillSelect('f-sol',SOL,'Selecionar...');}});
+  DB.ref('custos').once('value').then(s=>{const d=s.val();
+    if(d){const norm={};Object.keys(d).forEach(cod=>{norm[cod]=Object.values(d[cod]).filter(Boolean).sort((a,b)=>a.de<b.de?-1:1);});CUSTO_HIST=norm;}
+    else{saveCusto();} // primeira vez: semeia o Firebase com o custo padrão
+    rCusto();rConsumo();
+  });
   DB.ref('lancamentos').once('value').then(snap=>{const d=snap.val();
     if(d){LANC=Object.values(d).sort((a,b)=>b.ts-a.ts);}
     fbst('✓ '+LANC.length+' lançamentos','var(--green)');rLista();rConsumo();
   }).catch(()=>fbst('✗ falha ao carregar','var(--red)'));
 }
-initForm();rConsumo();fbLoad();
+initForm();fillCustoMat();rConsumo();fbLoad();
 </script>
 </body></html>
