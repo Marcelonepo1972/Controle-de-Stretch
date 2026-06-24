@@ -322,14 +322,34 @@ function excluir(id){if(!confirm('Excluir este lançamento? O endereço fica liv
 
 const DEST_COR={'Expedição FLV':'#2d7a22','Recebimento FLV':'#7b3fa0','Expedição Mercearia':'#e85d04','Recebimento Mercearia':'#1565c0','Reversa':'#f5a623','Perecível':'#c62828'};
 const APLIC_COR={'Aplicador Amarelo':'#f5a623','Aplicador Verde':'#2d7a22','Aplicador Azul':'#1565c0','Aplicador Laranja':'#e85d04'};
-const CUSTO={228752:17.2802,236566:7.9023,236567:7.9023,236568:7.9023,236569:7.9023};
-const custoUnit=cod=>CUSTO[cod]||0;
+// Custo por código + data de vigência (data da nota/entrega). Cada faixa vale a partir de 'de'.
+// Atualizar aqui sempre que entrar nota nova: basta acrescentar {de:'AAAA-MM-DD', v:custo, doc:'nota'}.
+const CUSTO_HIST={
+  228752:[ // Filme Eco Stretch · fornecedor 3488422 VALGROUP
+    {de:'2026-02-24', v:17.2802, doc:'5327'},
+    {de:'2026-04-29', v:25.7915, doc:'9814'},
+    {de:'2026-05-20', v:28.3732, doc:'11287'},
+    {de:'2026-06-03', v:32.9434, doc:'12509/12510'},
+    {de:'2026-06-19', v:34.4331, doc:'13457'}
+  ],
+  236566:[{de:'2000-01-01', v:7.9023}],
+  236567:[{de:'2000-01-01', v:7.9023}],
+  236568:[{de:'2000-01-01', v:7.9023}],
+  236569:[{de:'2000-01-01', v:7.9023}]
+};
+function custoUnit(cod,data){
+  const h=CUSTO_HIST[cod]; if(!h)return 0;
+  const d=data||'9999-12-31'; let v=h[0].v;
+  for(const f of h){ if(d>=f.de)v=f.v; else break; }
+  return v;
+}
+function custoAtual(cod){const h=CUSTO_HIST[cod];return h?h[h.length-1].v:0;}
 
 function rConsumo(){
   const byA={},byS={},byMat={};let kg=0,un=0,custo=0;
   M.cen.forEach(c=>byA[c.destino]={kg:0,un:0,n:0});
   LANC.forEach(r=>{const a=byA[r.destino]||(byA[r.destino]={kg:0,un:0,n:0});a.n++;
-    custo+=r.qty*custoUnit(r.matCod);
+    custo+=r.qty*custoUnit(r.matCod,r.data);
     if(isFilme(r.matNome)){a.kg+=r.qty;kg+=r.qty;}else{a.un+=r.qty;un+=r.qty;}
     byMat[r.matNome]=(byMat[r.matNome]||0)+r.qty;
     const s=byS[r.solicitante]||(byS[r.solicitante]={kg:0,un:0});
@@ -338,7 +358,7 @@ function rConsumo(){
   document.getElementById('c-cards').innerHTML=`
     <div class="mc"><div class="l">Filme liberado</div><div class="v g">${fmt(kg)}<span style="font-size:13px"> kg</span></div></div>
     <div class="mc"><div class="l">Aplicador liberado</div><div class="v o">${fmt(un,0)}<span style="font-size:13px"> un</span></div></div>
-    <div class="mc"><div class="l">Custo total</div><div class="v" style="font-size:19px">R$ ${fmt(custo,2)}</div><div class="h">filme + aplicador</div></div>
+    <div class="mc"><div class="l">Custo total</div><div class="v" style="font-size:19px">R$ ${fmt(custo,2)}</div><div class="h">por data da nota · filme atual R$ ${fmt(custoAtual(228752),4)}/kg</div></div>
     <div class="mc"><div class="l">Lançamentos</div><div class="v">${LANC.length}</div><div class="h">${Object.values(byA).filter(a=>a.n>0).length} áreas ativas</div></div>`;
 
   // rosca por área (kg de filme)
