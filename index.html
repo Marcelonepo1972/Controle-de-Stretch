@@ -74,7 +74,7 @@ tr:hover td{background:var(--bg3)}
     <div class="nav-item active" onclick="show('consumo',this)"><span class="ni">📊</span><span>Dashboard</span></div>
     <div class="nav-item" onclick="show('bases',this)"><span class="ni">🗂️</span><span>Bases</span></div>
   </div>
-  <div class="sb-foot"><span id="fbst" class="fbst">conectando…</span><br>v1.0 · rua 33</div>
+  <div class="sb-foot"><span id="fbst" class="fbst">conectando…</span><br>v1.5 · carga entradas</div>
 </div>
 <div class="main">
 
@@ -89,7 +89,7 @@ tr:hover td{background:var(--bg3)}
     <div class="panel">
       <div class="row">
         <div class="fg"><div class="fl">Material</div><select id="f-mat" onchange="onMat()"></select></div>
-        <div class="fg"><div class="fl">Quantidade <span id="f-un" class="mono" style="color:var(--text3)"></span></div><input type="number" id="f-qty" step="0.1" placeholder="147"></div>
+        <div class="fg"><div class="fl">Quantidade <span id="f-un" class="mono" style="color:var(--text3)"></span></div><input type="number" id="f-qty" step="0.1" placeholder="147" oninput="chkSaldo()"><div id="f-saldo" style="font-size:11px;margin-top:4px"></div></div>
         <div class="fg"><div class="fl">Data</div><input type="date" id="f-data"></div>
       </div>
       <div class="row">
@@ -142,6 +142,11 @@ tr:hover td{background:var(--bg3)}
       </div>
     </div>
     <div class="cards" id="c-cards"></div>
+    <div class="panel" id="saldo-panel">
+      <div class="pl">Saldo disponível por material · entradas − baixas</div>
+      <div class="ps" style="margin-bottom:10px">Saldo atual real, não sofre o filtro de período. Registre as notas de entrada na aba Bases.</div>
+      <div style="overflow:auto"><table><thead><tr><th>Material</th><th>Entradas</th><th>Baixas</th><th>Disponível</th></tr></thead><tbody id="saldo-body"></tbody></table></div>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" id="dash-grid">
       <div class="panel">
         <div class="pl">Progresso por área · % do volume de filme</div>
@@ -180,6 +185,22 @@ tr:hover td{background:var(--bg3)}
         <button class="btn sm primary" onclick="addCusto()">+ Adicionar faixa</button>
       </div>
       <div style="overflow:auto"><table><thead><tr><th>Material</th><th>A partir de</th><th>Custo (R$)</th><th>Nota</th><th></th></tr></thead><tbody id="cu-body"></tbody></table></div>
+    </div>
+    <div class="panel">
+      <div class="pl">Entradas de estoque · notas de recebimento</div>
+      <div class="ps" style="margin-bottom:12px">Cada nota que chega entra aqui. O saldo no Dashboard é entradas menos baixas dos lançamentos.</div>
+      <div class="bar" style="margin-bottom:10px">
+        <button class="btn sm primary" id="en-seed" onclick="seedEntradas()">⬆ Gravar entradas iniciais no Firebase (16)</button>
+        <span style="font-size:11px;color:var(--text3)">carga única · trava contra duplicação</span>
+      </div>
+      <div class="bar">
+        <select id="en-mat" style="width:auto"></select>
+        <span style="font-size:12px;color:var(--text3)">data</span><input type="date" id="en-data" style="width:auto">
+        <input type="number" id="en-qtd" step="0.1" placeholder="quantidade" style="width:150px">
+        <input type="text" id="en-doc" placeholder="nº nota (opcional)" style="width:150px">
+        <button class="btn sm primary" onclick="addEntrada()">+ Registrar entrada</button>
+      </div>
+      <div style="overflow:auto"><table><thead><tr><th>Data</th><th>Material</th><th>Qtd</th><th>Nota</th><th></th></tr></thead><tbody id="en-body"></tbody></table></div>
     </div>
     <div class="panel"><div class="pl">Endereços (<span id="b-endc"></span>) · rua 33 lado ímpar</div><div class="ps" id="b-endrange" style="margin-bottom:8px"></div><div class="pl">Materiais</div><div id="b-mat" style="display:flex;flex-wrap:wrap;gap:8px"></div></div>
   </div>
@@ -260,6 +281,100 @@ function selArea(d){
   else{dashAreas.has(d)?dashAreas.delete(d):dashAreas.add(d);}
   renderAreaChips();rConsumo();
 }
+
+// ===== CARGA INICIAL · entradas das NFs (payload do botão "Gravar entradas iniciais") =====
+// Inerte: NÃO entra em ENT automaticamente. Só vai pro Firebase quando você clica o botão na aba Bases.
+// Depois de gravado e confirmado, este bloco pode ser removido do código.
+let ENT=[];
+const SEED_ENT=[
+  {id:'E-5327', data:'2026-02-23', matCod:228752, qtd:8074,    doc:'5327',  ts:20260223},
+  {id:'E-5747', data:'2026-02-27', matCod:228752, qtd:572.8,   doc:'5747',  ts:20260227},
+  {id:'E-7504', data:'2026-03-25', matCod:228752, qtd:8133,    doc:'7504',  ts:20260325},
+  {id:'E-9814', data:'2026-04-28', matCod:228752, qtd:8158,    doc:'9814',  ts:20260428},
+  {id:'E-11287',data:'2026-05-18', matCod:228752, qtd:1451,    doc:'11287', ts:20260518},
+  {id:'E-12509',data:'2026-06-02', matCod:228752, qtd:4086.8,  doc:'12509', ts:20260602},
+  {id:'E-12510',data:'2026-06-02', matCod:228752, qtd:2631.8,  doc:'12510', ts:20260602},
+  {id:'E-13457',data:'2026-06-17', matCod:228752, qtd:8019.2,  doc:'13457', ts:20260617},
+  {id:'E-5324', data:'2026-02-23', matCod:236566, qtd:75,      doc:'5324 (faturada)', ts:20260223},
+  {id:'E-BONIF',data:'2026-06-17', matCod:236566, qtd:75,      doc:'bonificação s/ NF', ts:20260617},
+  {id:'E-5325', data:'2026-02-23', matCod:236567, qtd:30,      doc:'5325',  ts:20260223},
+  {id:'E-13459',data:'2026-06-17', matCod:236567, qtd:30,      doc:'13459', ts:20260617},
+  {id:'E-5326', data:'2026-02-23', matCod:236568, qtd:60,      doc:'5326',  ts:20260223},
+  {id:'E-13456',data:'2026-06-17', matCod:236568, qtd:60,      doc:'13456', ts:20260617},
+  {id:'E-5328', data:'2026-02-23', matCod:236569, qtd:90,      doc:'5328',  ts:20260223},
+  {id:'E-13458',data:'2026-06-17', matCod:236569, qtd:90,      doc:'13458', ts:20260617}
+];
+function entByMat(cod){return ENT.filter(e=>e.matCod===cod).reduce((s,e)=>s+(+e.qtd||0),0);}
+function baixaByMat(cod){return LANC.filter(r=>r.matCod===cod).reduce((s,r)=>s+(+r.qty||0),0);}
+function saldoMat(cod){return entByMat(cod)-baixaByMat(cod);}
+
+function rSaldo(){
+  const b=document.getElementById('saldo-body');if(!b)return;
+  b.innerHTML=M.mat.map(m=>{
+    const ent=entByMat(m.cod),bx=baixaByMat(m.cod),sal=ent-bx;
+    const cor=sal<0?'var(--red)':(ent>0&&sal<ent*0.15?'var(--orange)':'var(--green)');
+    const u=(m.un||'').toLowerCase();
+    return `<tr>
+      <td><span class="bdg ${isFilme(m.nome)?'f':'a'}">${isFilme(m.nome)?'filme':'aplic'}</span> ${m.nome}</td>
+      <td class="mono">${fmt(ent)} ${u}</td>
+      <td class="mono">${fmt(bx)} ${u}</td>
+      <td class="mono" style="color:${cor};font-weight:600">${fmt(sal)} ${u}</td>
+    </tr>`;
+  }).join('');
+}
+function chkSaldo(){
+  const el=document.getElementById('f-saldo');if(!el)return;
+  const m=matByNome((document.getElementById('f-mat')||{}).value);
+  if(!m){el.textContent='';return;}
+  const sal=saldoMat(m.cod),qty=parseFloat((document.getElementById('f-qty')||{}).value)||0,u=m.un.toLowerCase();
+  el.innerHTML=qty>sal
+    ?`<span style="color:var(--orange)">⚠ disponível ${fmt(sal)} ${u} · este lançamento excede o saldo</span>`
+    :`<span style="color:var(--text3)">disponível ${fmt(sal)} ${u}</span>`;
+}
+function fillEnMat(){const s=document.getElementById('en-mat');if(s)s.innerHTML=M.mat.map(m=>`<option value="${m.cod}">${m.nome} · ${m.un}</option>`).join('');}
+function rEntradas(){
+  const b=document.getElementById('en-body');if(!b)return;
+  b.innerHTML=[...ENT].sort((a,b)=>b.ts-a.ts).map(e=>{
+    const m=M.mat.find(x=>x.cod===e.matCod)||{nome:e.matCod,un:''};
+    return `<tr>
+      <td class="mono">${e.data.split('-').reverse().join('/')}</td>
+      <td>${m.nome}</td>
+      <td class="mono">${fmt(e.qtd)} ${(m.un||'').toLowerCase()}</td>
+      <td class="mono" style="color:var(--text3)">${e.doc||''}</td>
+      <td><button class="btn sm danger" onclick="delEntrada('${e.id}')">✕</button></td>
+    </tr>`;}).join('')||'<tr><td colspan="5" style="color:var(--text3)">Nenhuma entrada registrada.</td></tr>';
+}
+function addEntrada(){
+  const cod=parseInt(document.getElementById('en-mat').value),data=document.getElementById('en-data').value,
+    qtd=parseFloat(document.getElementById('en-qtd').value),doc=document.getElementById('en-doc').value.trim();
+  if(!cod||!data||!qtd){alert('Material, data e quantidade são obrigatórios.');return;}
+  const rec={id:'E'+Date.now()+Math.floor(Math.random()*999),data,matCod:cod,qtd,doc,ts:Date.now()};
+  ENT.unshift(rec);
+  if(FB_OK){fbst('salvando entrada…','var(--orange)');DB.ref('entradas/'+rec.id).set(rec).then(()=>fbst('✓ entrada salva','var(--green)')).catch(()=>fbst('✗ erro','var(--red)'));}
+  document.getElementById('en-qtd').value='';document.getElementById('en-doc').value='';
+  rEntradas();rSaldo();toast('Entrada registrada');
+}
+function delEntrada(id){
+  if(!confirm('Remover esta entrada? O saldo disponível vai diminuir.'))return;
+  ENT=ENT.filter(e=>e.id!==id);
+  if(FB_OK)DB.ref('entradas/'+id).remove();
+  rEntradas();rSaldo();toast('Entrada removida');
+}
+function refreshSeedBtn(done){const b=document.getElementById('en-seed');if(!b)return;
+  if(done){b.disabled=true;b.textContent='✓ Entradas iniciais já gravadas';b.classList.remove('primary');b.style.opacity='.6';}}
+function seedEntradas(){
+  if(!FB_OK){alert('Sem conexão com o Firebase. Conecte antes de gravar.');return;}
+  DB.ref('entradas').once('value').then(s=>{
+    if(s.val()){alert('Já existem entradas no Firebase. Carga inicial cancelada para não duplicar.');refreshSeedBtn(true);return;}
+    if(!confirm('Gravar as '+SEED_ENT.length+' entradas iniciais no Firebase? É feito uma vez só.'))return;
+    const payload={};SEED_ENT.forEach(e=>payload[e.id]=e); // id fixo: reescreve, nunca duplica
+    fbst('gravando entradas…','var(--orange)');
+    DB.ref('entradas').update(payload).then(()=>{
+      ENT=[...SEED_ENT];rEntradas();rSaldo();refreshSeedBtn(true);
+      fbst('✓ entradas gravadas','var(--green)');toast('Carga concluída · '+SEED_ENT.length+' entradas');
+    }).catch(()=>{fbst('✗ erro ao gravar','var(--red)');alert('Falha ao gravar. Tente de novo.');});
+  });
+}
 function renderEnd(arr){document.getElementById('f-end').innerHTML='<option value="">Selecionar...</option>'+arr.map(e=>`<option>${e}</option>`).join('');}
 function filtEnd(){const q=document.getElementById('f-endfil').value.replace(/\s/g,'');renderEnd(M.ends.filter(e=>e.includes(q)));}
 function selDest(el,d){document.querySelectorAll('#chips-dest .chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');destSel=d;
@@ -267,7 +382,7 @@ function selDest(el,d){document.querySelectorAll('#chips-dest .chip').forEach(c=
   box.style.display='block';box.textContent=`Centro de custo: ${c.cod} · ${c.nome}`;}
 function onMat(){const n=document.getElementById('f-mat').value;const m=matByNome(n);
   document.getElementById('f-un').textContent=m?'('+m.un+')':'';
-  if(m)document.getElementById('f-qty').placeholder=isFilme(n)?'147':'1';}
+  if(m)document.getElementById('f-qty').placeholder=isFilme(n)?'147':'1';chkSaldo();}
 
 function salvar(){
   const mat=document.getElementById('f-mat').value,qty=parseFloat(document.getElementById('f-qty').value),
@@ -281,7 +396,7 @@ function salvar(){
   if(FB_OK){fbst('salvando…','var(--orange)');DB.ref('lancamentos/'+rec.id).set(rec).then(()=>fbst('✓ salvo','var(--green)')).catch(()=>fbst('✗ erro','var(--red)'));}
   const i=LANC.findIndex(x=>x.id===rec.id);if(i>=0)LANC[i]=rec;else LANC.unshift(rec);
   toast(editId?'Lançamento atualizado':'Liberação lançada');editId=null;document.getElementById('edit-flag').style.display='none';
-  limpar();
+  limpar();rSaldo();
 }
 function limpar(){['f-qty','f-obs','f-endfil'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-mat').value='';document.getElementById('f-sol').value='';
@@ -349,10 +464,10 @@ function salvarEdit(){
     endereco:end,data:document.getElementById('m-data').value,
     obs:document.getElementById('m-obs').value.trim()});
   if(FB_OK)DB.ref('lancamentos/'+r.id).set(r);
-  fecharModal();rLista();toast('Lançamento atualizado');
+  fecharModal();rLista();rSaldo();toast('Lançamento atualizado');
 }
 function excluir(id){if(!confirm('Excluir este lançamento? O endereço fica livre para relançar.'))return;
-  LANC=LANC.filter(x=>x.id!==id);if(FB_OK)DB.ref('lancamentos/'+id).remove();rLista();toast('Lançamento excluído');}
+  LANC=LANC.filter(x=>x.id!==id);if(FB_OK)DB.ref('lancamentos/'+id).remove();rLista();rSaldo();toast('Lançamento excluído');}
 
 const DEST_COR={'Expedição FLV':'#2d7a22','Recebimento FLV':'#7b3fa0','Expedição Mercearia':'#e85d04','Recebimento Mercearia':'#1565c0','Reversa':'#f5a623','Perecível':'#c62828'};
 const APLIC_COR={'Aplicador Amarelo':'#f5a623','Aplicador Verde':'#2d7a22','Aplicador Azul':'#1565c0','Aplicador Laranja':'#e85d04'};
@@ -454,7 +569,7 @@ function rBases(){
   document.getElementById('b-endc').textContent=M.ends.length;
   document.getElementById('b-endrange').textContent=M.ends[0]+' até '+M.ends[M.ends.length-1];
   document.getElementById('b-mat').innerHTML=M.mat.map(m=>`<span class="chip">${m.nome} · ${m.cod} · ${m.un}</span>`).join('');
-  rCusto();
+  rCusto();rEntradas();
 }
 
 function fillCustoMat(){const s=document.getElementById('cu-mat');if(s)s.innerHTML=M.mat.map(m=>`<option value="${m.cod}">${m.nome} · ${m.cod}</option>`).join('');}
@@ -516,9 +631,10 @@ function fbLoad(){
     else{saveCusto();} // primeira vez: semeia o Firebase com o custo padrão
     rCusto();rConsumo();
   });
+  DB.ref('entradas').once('value').then(s=>{const d=s.val();if(d){ENT=Object.values(d);refreshSeedBtn(true);}rEntradas();rSaldo();});
   DB.ref('lancamentos').once('value').then(snap=>{const d=snap.val();
     if(d){LANC=Object.values(d).sort((a,b)=>b.ts-a.ts);}
-    fbst('✓ '+LANC.length+' lançamentos','var(--green)');rLista();rConsumo();
+    fbst('✓ '+LANC.length+' lançamentos','var(--green)');rLista();rConsumo();rSaldo();
   }).catch(()=>fbst('✗ falha ao carregar','var(--red)'));
 }
 initForm();fillCustoMat();rConsumo();fbLoad();
