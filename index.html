@@ -74,7 +74,7 @@ tr:hover td{background:var(--bg3)}
     <div class="nav-item active" onclick="show('consumo',this)"><span class="ni">📊</span><span>Dashboard</span></div>
     <div class="nav-item" onclick="show('bases',this)"><span class="ni">🗂️</span><span>Bases</span></div>
   </div>
-  <div class="sb-foot"><span id="fbst" class="fbst">conectando…</span><br>v1.5 · carga entradas</div>
+  <div class="sb-foot"><span id="fbst" class="fbst">conectando…</span><br>v1.6 · estoque ativo</div>
 </div>
 <div class="main">
 
@@ -189,10 +189,6 @@ tr:hover td{background:var(--bg3)}
     <div class="panel">
       <div class="pl">Entradas de estoque · notas de recebimento</div>
       <div class="ps" style="margin-bottom:12px">Cada nota que chega entra aqui. O saldo no Dashboard é entradas menos baixas dos lançamentos.</div>
-      <div class="bar" style="margin-bottom:10px">
-        <button class="btn sm primary" id="en-seed" onclick="seedEntradas()">⬆ Gravar entradas iniciais no Firebase (16)</button>
-        <span style="font-size:11px;color:var(--text3)">carga única · trava contra duplicação</span>
-      </div>
       <div class="bar">
         <select id="en-mat" style="width:auto"></select>
         <span style="font-size:12px;color:var(--text3)">data</span><input type="date" id="en-data" style="width:auto">
@@ -282,28 +278,8 @@ function selArea(d){
   renderAreaChips();rConsumo();
 }
 
-// ===== CARGA INICIAL · entradas das NFs (payload do botão "Gravar entradas iniciais") =====
-// Inerte: NÃO entra em ENT automaticamente. Só vai pro Firebase quando você clica o botão na aba Bases.
-// Depois de gravado e confirmado, este bloco pode ser removido do código.
+// ===== ESTOQUE: entradas e saldo (saldo = entradas - baixas, calculado). Entradas vêm do Firebase. =====
 let ENT=[];
-const SEED_ENT=[
-  {id:'E-5327', data:'2026-02-23', matCod:228752, qtd:8074,    doc:'5327',  ts:20260223},
-  {id:'E-5747', data:'2026-02-27', matCod:228752, qtd:572.8,   doc:'5747',  ts:20260227},
-  {id:'E-7504', data:'2026-03-25', matCod:228752, qtd:8133,    doc:'7504',  ts:20260325},
-  {id:'E-9814', data:'2026-04-28', matCod:228752, qtd:8158,    doc:'9814',  ts:20260428},
-  {id:'E-11287',data:'2026-05-18', matCod:228752, qtd:1451,    doc:'11287', ts:20260518},
-  {id:'E-12509',data:'2026-06-02', matCod:228752, qtd:4086.8,  doc:'12509', ts:20260602},
-  {id:'E-12510',data:'2026-06-02', matCod:228752, qtd:2631.8,  doc:'12510', ts:20260602},
-  {id:'E-13457',data:'2026-06-17', matCod:228752, qtd:8019.2,  doc:'13457', ts:20260617},
-  {id:'E-5324', data:'2026-02-23', matCod:236566, qtd:75,      doc:'5324 (faturada)', ts:20260223},
-  {id:'E-BONIF',data:'2026-06-17', matCod:236566, qtd:75,      doc:'bonificação s/ NF', ts:20260617},
-  {id:'E-5325', data:'2026-02-23', matCod:236567, qtd:30,      doc:'5325',  ts:20260223},
-  {id:'E-13459',data:'2026-06-17', matCod:236567, qtd:30,      doc:'13459', ts:20260617},
-  {id:'E-5326', data:'2026-02-23', matCod:236568, qtd:60,      doc:'5326',  ts:20260223},
-  {id:'E-13456',data:'2026-06-17', matCod:236568, qtd:60,      doc:'13456', ts:20260617},
-  {id:'E-5328', data:'2026-02-23', matCod:236569, qtd:90,      doc:'5328',  ts:20260223},
-  {id:'E-13458',data:'2026-06-17', matCod:236569, qtd:90,      doc:'13458', ts:20260617}
-];
 function entByMat(cod){return ENT.filter(e=>e.matCod===cod).reduce((s,e)=>s+(+e.qtd||0),0);}
 function baixaByMat(cod){return LANC.filter(r=>r.matCod===cod).reduce((s,r)=>s+(+r.qty||0),0);}
 function saldoMat(cod){return entByMat(cod)-baixaByMat(cod);}
@@ -359,21 +335,6 @@ function delEntrada(id){
   ENT=ENT.filter(e=>e.id!==id);
   if(FB_OK)DB.ref('entradas/'+id).remove();
   rEntradas();rSaldo();toast('Entrada removida');
-}
-function refreshSeedBtn(done){const b=document.getElementById('en-seed');if(!b)return;
-  if(done){b.disabled=true;b.textContent='✓ Entradas iniciais já gravadas';b.classList.remove('primary');b.style.opacity='.6';}}
-function seedEntradas(){
-  if(!FB_OK){alert('Sem conexão com o Firebase. Conecte antes de gravar.');return;}
-  DB.ref('entradas').once('value').then(s=>{
-    if(s.val()){alert('Já existem entradas no Firebase. Carga inicial cancelada para não duplicar.');refreshSeedBtn(true);return;}
-    if(!confirm('Gravar as '+SEED_ENT.length+' entradas iniciais no Firebase? É feito uma vez só.'))return;
-    const payload={};SEED_ENT.forEach(e=>payload[e.id]=e); // id fixo: reescreve, nunca duplica
-    fbst('gravando entradas…','var(--orange)');
-    DB.ref('entradas').update(payload).then(()=>{
-      ENT=[...SEED_ENT];rEntradas();rSaldo();refreshSeedBtn(true);
-      fbst('✓ entradas gravadas','var(--green)');toast('Carga concluída · '+SEED_ENT.length+' entradas');
-    }).catch(()=>{fbst('✗ erro ao gravar','var(--red)');alert('Falha ao gravar. Tente de novo.');});
-  });
 }
 function renderEnd(arr){document.getElementById('f-end').innerHTML='<option value="">Selecionar...</option>'+arr.map(e=>`<option>${e}</option>`).join('');}
 function filtEnd(){const q=document.getElementById('f-endfil').value.replace(/\s/g,'');renderEnd(M.ends.filter(e=>e.includes(q)));}
@@ -631,7 +592,7 @@ function fbLoad(){
     else{saveCusto();} // primeira vez: semeia o Firebase com o custo padrão
     rCusto();rConsumo();
   });
-  DB.ref('entradas').once('value').then(s=>{const d=s.val();if(d){ENT=Object.values(d);refreshSeedBtn(true);}rEntradas();rSaldo();});
+  DB.ref('entradas').once('value').then(s=>{const d=s.val();if(d)ENT=Object.values(d);rEntradas();rSaldo();});
   DB.ref('lancamentos').once('value').then(snap=>{const d=snap.val();
     if(d){LANC=Object.values(d).sort((a,b)=>b.ts-a.ts);}
     fbst('✓ '+LANC.length+' lançamentos','var(--green)');rLista();rConsumo();rSaldo();
