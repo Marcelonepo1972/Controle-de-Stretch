@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8">
+<!-- saved from url=(0054)https://marcelonepo1972.github.io/Controle-de-Stretch/ -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Controle de Liberação · Stretch & Aplicadores · Oba</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<title>Controle de Liberação · Stretch &amp; Aplicadores · Oba</title>
+<link href="./Controle de Liberação · Stretch &amp; Aplicadores · Oba_files/css2" rel="stylesheet">
+<script src="./Controle de Liberação · Stretch &amp; Aplicadores · Oba_files/xlsx.full.min.js.download"></script>
+<script src="./Controle de Liberação · Stretch &amp; Aplicadores · Oba_files/firebase-app-compat.js.download"></script>
+<script src="./Controle de Liberação · Stretch &amp; Aplicadores · Oba_files/firebase-database-compat.js.download"></script>
 <style>
 :root{--bg:#f5f7f2;--bg2:#fff;--bg3:#eef1ea;--border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.14);
 --text:#1a2214;--text2:#4a5c3f;--text3:#8a9e7e;--green:#2d7a22;--orange:#e85d04;--yellow:#f5a623;
@@ -85,17 +86,17 @@ tr:hover td{background:var(--bg3)}
 .farol-barfill{height:100%;border-radius:4px;transition:.3s}
 .fbst{font-size:10px;font-family:'DM Mono',monospace;color:var(--sb-t2)}
 @media(max-width:820px){.sidebar{width:56px}.logo-title,.logo-sub,.nav-item span,.sb-foot{display:none}.main{margin-left:56px;padding:18px 14px}.row{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,1fr)}}
-</style></head>
+</style><meta id="bbafmabaelnnkondpfpjmdklbmfnbmol"></head>
 <body>
 <div class="sidebar">
-  <div class="logo"><div class="logo-mark">📦</div><div class="logo-title">Controle de Liberação</div><div class="logo-sub">Stretch & Aplicadores · CD Oba</div></div>
+  <div class="logo"><div class="logo-mark">📦</div><div class="logo-title">Controle de Liberação</div><div class="logo-sub">Stretch &amp; Aplicadores · CD Oba</div></div>
   <div class="nav">
-    <div class="nav-item" onclick="show('lancar',this)"><span class="ni">➕</span><span>Lançar</span></div>
-    <div class="nav-item" onclick="show('lista',this)"><span class="ni">📋</span><span>Lançamentos</span></div>
-    <div class="nav-item active" onclick="show('consumo',this)"><span class="ni">📊</span><span>Dashboard</span></div>
-    <div class="nav-item" onclick="show('bases',this)"><span class="ni">🗂️</span><span>Bases</span></div>
+    <div class="nav-item" onclick="show(&#39;lancar&#39;,this)"><span class="ni">➕</span><span>Lançar</span></div>
+    <div class="nav-item" onclick="show(&#39;lista&#39;,this)"><span class="ni">📋</span><span>Lançamentos</span></div>
+    <div class="nav-item active" onclick="show(&#39;consumo&#39;,this)"><span class="ni">📊</span><span>Dashboard</span></div>
+    <div class="nav-item" onclick="show(&#39;bases&#39;,this)"><span class="ni">🗂️</span><span>Bases</span></div>
   </div>
-  <div class="sb-foot"><span id="fbst" class="fbst">conectando…</span><br>v1.1 · farol de cobertura · rua 33</div>
+  <div class="sb-foot"><span id="fbst" class="fbst" style="color: var(--green);">✓ 173 lançamentos</span><br>v1.2 · farol semanal · rua 33</div>
 </div>
 <div class="main">
 
@@ -104,20 +105,20 @@ tr:hover td{background:var(--bg3)}
     <div class="ph"><div class="pt">Lançar liberação</div><div class="ps">Tudo em lista suspensa. Quantidade é o único número.</div></div>
     <div class="panel">
       <div class="pl">Área de destino</div>
-      <div class="chips" id="chips-dest"></div>
+      <div class="chips" id="chips-dest"><span class="chip" onclick="selDest(this,&#39;Expedição FLV&#39;)">Expedição FLV</span><span class="chip" onclick="selDest(this,&#39;Recebimento FLV&#39;)">Recebimento FLV</span><span class="chip" onclick="selDest(this,&#39;Expedição Mercearia&#39;)">Expedição Mercearia</span><span class="chip" onclick="selDest(this,&#39;Recebimento Mercearia&#39;)">Recebimento Mercearia</span><span class="chip" onclick="selDest(this,&#39;Perecível&#39;)">Perecível</span><span class="chip" onclick="selDest(this,&#39;Reversa&#39;)">Reversa</span></div>
       <div id="centro-box" class="centro-box" style="margin-top:12px;display:none"></div>
     </div>
     <div class="panel">
       <div class="row">
-        <div class="fg"><div class="fl">Material</div><select id="f-mat" onchange="onMat()"></select></div>
+        <div class="fg"><div class="fl">Material</div><select id="f-mat" onchange="onMat()"><option value="">Selecionar...</option><option>Filme Eco Stretch</option><option>Aplicador Amarelo</option><option>Aplicador Laranja</option><option>Aplicador Azul</option><option>Aplicador Verde</option></select></div>
         <div class="fg"><div class="fl">Quantidade <span id="f-un" class="mono" style="color:var(--text3)"></span></div><input type="number" id="f-qty" step="0.1" placeholder="147"></div>
         <div class="fg"><div class="fl">Data</div><input type="date" id="f-data"></div>
       </div>
       <div class="row">
-        <div class="fg"><div class="fl">Solicitante</div><select id="f-sol"></select></div>
+        <div class="fg"><div class="fl">Solicitante</div><select id="f-sol"><option value="">Selecionar...</option><option>Alex Darci</option><option>Anderson Souza</option><option>Antônio Teixeira</option><option>Carlos Marcelo</option><option>Diogo Lucas</option><option>Elton de Souza</option><option>Fabiano Farias</option><option>Faustino Reis</option><option>Francisco Wesley</option><option>Hobede Pinheiros</option><option>Jefferson Rouxinol</option><option>João de Lana</option><option>Josimar Lima</option><option>Jucivania Dantas</option><option>Leandro Ferreira</option><option>Lucas Honathan</option><option>Melquisedeque</option><option>Railton Santana</option><option>Reginaldo Farias</option><option>Renildo Britto</option><option>Rodrigo Fernandes</option><option>Rogério Souza</option><option>Ronivon Santos</option><option>Wagner Carlos</option><option>Yasser Carvalho</option><option>Adilson Pereira da Silva</option><option>Ezequias de Oliveira</option><option>Jairo Pereira da Silva</option><option>Melquisedeque Pereira de Souza</option><option>Massami Tanabu</option></select></div>
         <div class="fg"><div class="fl">Endereço de estoque <span style="color:var(--text3)">(filtre digitando)</span></div>
           <input type="text" id="f-endfil" placeholder="Filtrar... ex: 33.05" oninput="filtEnd()" style="margin-bottom:6px">
-          <select id="f-end" size="1"></select>
+          <select id="f-end" size="1"><option value="">Selecionar...</option><option>03.033.01.02.01</option><option>03.033.01.04.01</option><option>03.033.01.06.01</option><option>03.033.01.08.01</option><option>03.033.01.10.01</option><option>03.033.03.02.01</option><option>03.033.03.04.01</option><option>03.033.03.06.01</option><option>03.033.03.08.01</option><option>03.033.03.10.01</option><option>03.033.05.02.01</option><option>03.033.05.04.01</option><option>03.033.05.06.01</option><option>03.033.05.08.01</option><option>03.033.05.10.01</option><option>03.033.07.02.01</option><option>03.033.07.04.01</option><option>03.033.07.06.01</option><option>03.033.07.08.01</option><option>03.033.07.10.01</option><option>03.033.09.02.01</option><option>03.033.09.04.01</option><option>03.033.09.06.01</option><option>03.033.09.08.01</option><option>03.033.09.10.01</option><option>03.033.11.02.01</option><option>03.033.11.04.01</option><option>03.033.11.06.01</option><option>03.033.11.08.01</option><option>03.033.11.10.01</option><option>03.033.13.02.01</option><option>03.033.13.04.01</option><option>03.033.13.06.01</option><option>03.033.13.08.01</option><option>03.033.13.10.01</option><option>03.033.15.02.01</option><option>03.033.15.04.01</option><option>03.033.15.06.01</option><option>03.033.15.08.01</option><option>03.033.15.10.01</option><option>03.033.17.02.01</option><option>03.033.17.04.01</option><option>03.033.17.06.01</option><option>03.033.17.08.01</option><option>03.033.17.10.01</option><option>03.033.19.02.01</option><option>03.033.19.04.01</option><option>03.033.19.06.01</option><option>03.033.19.08.01</option><option>03.033.19.10.01</option><option>03.033.21.02.01</option><option>03.033.21.04.01</option><option>03.033.21.06.01</option><option>03.033.21.08.01</option><option>03.033.21.10.01</option><option>03.033.23.02.01</option><option>03.033.23.04.01</option><option>03.033.23.06.01</option><option>03.033.23.08.01</option><option>03.033.23.10.01</option><option>03.033.25.02.01</option><option>03.033.25.04.01</option><option>03.033.25.06.01</option><option>03.033.25.08.01</option><option>03.033.25.10.01</option><option>03.033.27.02.01</option><option>03.033.27.04.01</option><option>03.033.27.06.01</option><option>03.033.27.08.01</option><option>03.033.27.10.01</option><option>03.033.29.02.01</option><option>03.033.29.04.01</option><option>03.033.29.06.01</option><option>03.033.29.08.01</option><option>03.033.29.10.01</option><option>03.033.31.02.01</option><option>03.033.31.04.01</option><option>03.033.31.06.01</option><option>03.033.31.08.01</option><option>03.033.31.10.01</option><option>03.033.33.02.01</option><option>03.033.33.04.01</option><option>03.033.33.06.01</option><option>03.033.33.08.01</option><option>03.033.33.10.01</option><option>03.033.35.02.01</option><option>03.033.35.04.01</option><option>03.033.35.06.01</option><option>03.033.35.08.01</option><option>03.033.35.10.01</option><option>03.033.37.02.01</option><option>03.033.37.04.01</option><option>03.033.37.06.01</option><option>03.033.37.08.01</option><option>03.033.37.10.01</option><option>03.033.39.02.01</option><option>03.033.39.04.01</option><option>03.033.39.06.01</option><option>03.033.39.08.01</option><option>03.033.39.10.01</option><option>03.033.41.02.01</option><option>03.033.41.04.01</option><option>03.033.41.06.01</option><option>03.033.41.08.01</option><option>03.033.41.10.01</option><option>03.033.43.02.01</option><option>03.033.43.04.01</option><option>03.033.43.06.01</option><option>03.033.43.08.01</option><option>03.033.43.10.01</option><option>03.033.45.02.01</option><option>03.033.45.04.01</option><option>03.033.45.06.01</option><option>03.033.45.08.01</option><option>03.033.45.10.01</option><option>03.033.47.02.01</option><option>03.033.47.04.01</option><option>03.033.47.06.01</option><option>03.033.47.08.01</option><option>03.033.47.10.01</option><option>03.033.49.02.01</option><option>03.033.49.04.01</option><option>03.033.49.06.01</option><option>03.033.49.08.01</option><option>03.033.49.10.01</option><option>03.033.51.02.01</option><option>03.033.51.04.01</option><option>03.033.51.06.01</option><option>03.033.51.08.01</option><option>03.033.51.10.01</option><option>03.033.53.02.01</option><option>03.033.53.04.01</option><option>03.033.53.06.01</option><option>03.033.53.08.01</option><option>03.033.53.10.01</option><option>03.033.55.02.01</option><option>03.033.55.04.01</option><option>03.033.55.06.01</option><option>03.033.55.08.01</option><option>03.033.55.10.01</option><option>03.033.57.02.01</option><option>03.033.57.04.01</option><option>03.033.57.06.01</option><option>03.033.57.08.01</option><option>03.033.57.10.01</option><option>03.033.59.02.01</option><option>03.033.59.04.01</option><option>03.033.59.06.01</option><option>03.033.59.08.01</option><option>03.033.59.10.01</option><option>03.033.61.02.01</option><option>03.033.61.04.01</option><option>03.033.61.06.01</option><option>03.033.61.08.01</option><option>03.033.61.10.01</option><option>03.033.63.02.01</option><option>03.033.63.04.01</option><option>03.033.63.06.01</option><option>03.033.63.08.01</option><option>03.033.63.10.01</option><option>03.033.65.02.01</option><option>03.033.65.04.01</option><option>03.033.65.06.01</option><option>03.033.65.08.01</option><option>03.033.65.10.01</option><option>03.033.67.02.01</option><option>03.033.67.04.01</option><option>03.033.67.06.01</option><option>03.033.67.08.01</option><option>03.033.67.10.01</option><option>03.033.69.02.01</option><option>03.033.69.04.01</option><option>03.033.69.06.01</option><option>03.033.69.08.01</option><option>03.033.69.10.01</option><option>03.033.71.02.01</option><option>03.033.71.04.01</option><option>03.033.71.06.01</option><option>03.033.71.08.01</option><option>03.033.71.10.01</option><option>03.033.73.02.01</option><option>03.033.73.04.01</option><option>03.033.73.06.01</option><option>03.033.73.08.01</option><option>03.033.73.10.01</option><option>03.033.75.02.01</option><option>03.033.75.04.01</option><option>03.033.75.06.01</option><option>03.033.75.08.01</option><option>03.033.75.10.01</option><option>03.033.77.02.01</option><option>03.033.77.04.01</option><option>03.033.77.06.01</option><option>03.033.77.08.01</option><option>03.033.77.10.01</option><option>03.033.79.02.01</option><option>03.033.79.04.01</option><option>03.033.79.06.01</option><option>03.033.79.08.01</option><option>03.033.79.10.01</option><option>03.033.81.02.01</option><option>03.033.81.04.01</option><option>03.033.81.06.01</option><option>03.033.81.08.01</option><option>03.033.81.10.01</option></select>
         </div>
         <div class="fg"><div class="fl">Observação</div><input type="text" id="f-obs" placeholder="opcional"></div>
       </div>
@@ -136,16 +137,1227 @@ tr:hover td{background:var(--bg3)}
     <div class="panel">
       <div class="bar">
         <input type="text" id="l-busca" placeholder="Buscar..." oninput="rLista()" style="width:150px">
-        <select id="l-dest" onchange="rLista()" style="width:auto"><option value="">Todas as áreas</option></select>
+        <select id="l-dest" onchange="rLista()" style="width:auto"><option value="">Todas as áreas</option><option>Expedição FLV</option><option>Recebimento FLV</option><option>Expedição Mercearia</option><option>Recebimento Mercearia</option><option>Perecível</option><option>Reversa</option></select>
         <span style="font-size:12px;color:var(--text3)">de</span><input type="date" id="l-de" onchange="rLista()" style="width:auto">
         <span style="font-size:12px;color:var(--text3)">até</span><input type="date" id="l-ate" onchange="rLista()" style="width:auto">
         <button class="btn sm" onclick="limparFiltro()">limpar</button>
         <button class="btn sm" onclick="exportar()">⬇ Exportar período (.xlsx)</button>
-        <span style="margin-left:auto;font-size:12px;color:var(--text3)" id="l-count"></span>
+        <span style="margin-left:auto;font-size:12px;color:var(--text3)" id="l-count">173 lançamento(s)</span>
       </div>
       <div style="overflow:auto">
       <table><thead><tr><th>Data</th><th>Material</th><th>Qtd</th><th>Área</th><th>Solicitante</th><th>Endereço</th><th>Obs</th><th></th></tr></thead>
-      <tbody id="l-body"></tbody></table>
+      <tbody id="l-body"><tr>
+    <td class="mono">06/07/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">149,0 kg</td>
+    <td>Recebimento FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.03.04.01</td>
+    <td style="color:var(--text3)">208144653</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1783423438222347&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1783423438222347&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">06/07/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,4 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.03.02.01</td>
+    <td style="color:var(--text3)">208144653</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1783423404842526&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1783423404842526&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">03/07/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,2 kg</td>
+    <td>Perecível</td><td>Wagner Carlos</td><td class="mono">03.033.01.04.01</td>
+    <td style="color:var(--text3)">207786689</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1783355117438552&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1783355117438552&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">04/07/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,2 kg</td>
+    <td>Recebimento FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.01.02.01</td>
+    <td style="color:var(--text3)">207913845</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1783355036695856&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1783355036695856&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">03/07/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">149,2 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.15.04.01</td>
+    <td style="color:var(--text3)">207816760</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1783354989304979&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1783354989304979&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">01/07/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,4 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.15.02.01</td>
+    <td style="color:var(--text3)">207403692</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1783354811445459&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1783354811445459&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">03/07/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,8 kg</td>
+    <td>Perecível</td><td>Wagner Carlos</td><td class="mono">03.033.31.06.01</td>
+    <td style="color:var(--text3)">207786689</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1783099621440259&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1783099621440259&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">02/07/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">151,0 kg</td>
+    <td>Recebimento Mercearia</td><td>Massami Tanabu</td><td class="mono">03.033.17.08.01</td>
+    <td style="color:var(--text3)">207587865</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1783020328121270&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1783020328121270&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">01/07/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,0 kg</td>
+    <td>Recebimento FLV</td><td>Faustino Reis</td><td class="mono">03.033.17.10.01</td>
+    <td style="color:var(--text3)">207673424</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1783020122155952&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1783020122155952&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">30/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">142,0 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.19.02.01</td>
+    <td style="color:var(--text3)">207281349</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782990006894417&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782990006894417&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">01/07/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,6 kg</td>
+    <td>Expedição FLV</td><td>Ezequias de Oliveira</td><td class="mono">03.033.29.06.01</td>
+    <td style="color:var(--text3)">207481618</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782936842455481&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782936842455481&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">01/07/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,6 kg</td>
+    <td>Expedição FLV</td><td>Ezequias de Oliveira</td><td class="mono">03.033.33.06.01</td>
+    <td style="color:var(--text3)">207481618</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782936804527365&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782936804527365&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">01/07/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,8 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.07.10.01</td>
+    <td style="color:var(--text3)">207035328</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782919485491238&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782919485491238&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">26/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,4 kg</td>
+    <td>Recebimento Mercearia</td><td>Josimar Lima</td><td class="mono">03.033.31.08.01</td>
+    <td style="color:var(--text3)">206795700</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782577140599983&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782577140599983&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">26/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,6 kg</td>
+    <td>Expedição FLV</td><td>Ezequias de Oliveira</td><td class="mono">03.033.51.10.01</td>
+    <td style="color:var(--text3)">206819967</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782504348408705&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782504348408705&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">26/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,0 kg</td>
+    <td>Expedição FLV</td><td>Ezequias de Oliveira</td><td class="mono">03.033.21.02.01</td>
+    <td style="color:var(--text3)">20681997</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782504304512726&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782504304512726&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">24/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,2 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.39.02.01</td>
+    <td style="color:var(--text3)">206470792</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782326663577712&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782326663577712&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">24/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,0 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.47.02.01</td>
+    <td style="color:var(--text3)">206470792</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782326589897412&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782326589897412&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">22/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,4 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.03.02.01</td>
+    <td style="color:var(--text3)"></td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782170919198590&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782170919198590&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">22/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,2 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.01.02.01</td>
+    <td style="color:var(--text3)"></td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782170873398932&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782170873398932&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">22/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,4 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.25.08.01</td>
+    <td style="color:var(--text3)">206045188</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782138950462785&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782138950462785&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">22/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,0 kg</td>
+    <td>Perecível</td><td>Wagner Carlos</td><td class="mono">03.033.25.06.01</td>
+    <td style="color:var(--text3)">206049083</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782138820207880&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782138820207880&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">21/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,2 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.31.02.01</td>
+    <td style="color:var(--text3)">206015928</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782126274614664&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782126274614664&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">21/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">142,6 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.51.02.01</td>
+    <td style="color:var(--text3)">205953709</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1782126226078181&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1782126226078181&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">19/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,8 kg</td>
+    <td>Recebimento Mercearia</td><td>Josimar Lima</td><td class="mono">03.033.31.04.01</td>
+    <td style="color:var(--text3)">OP. PEDRINHO</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1781962777262171&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1781962777262171&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">17/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,0 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.33.08.01</td>
+    <td style="color:var(--text3)"></td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1781872608777620&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1781872608777620&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">15/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,2 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.35.04.01</td>
+    <td style="color:var(--text3)">205055185</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1781638870721636&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1781638870721636&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">15/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,2 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.05.06.01</td>
+    <td style="color:var(--text3)">205055185</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1781638833113544&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1781638833113544&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">12/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,8 kg</td>
+    <td>Expedição FLV</td><td>Ezequias de Oliveira</td><td class="mono">03.033.37.04.01</td>
+    <td style="color:var(--text3)">SMA</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1781615138452310&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1781615138452310&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">15/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,0 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.05.04.01</td>
+    <td style="color:var(--text3)"></td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;L1781604429825688&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;L1781604429825688&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">11/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,0 kg</td>
+    <td>Expedição Mercearia</td><td>Josimar Lima</td><td class="mono">03.033.37.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H142&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H142&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">11/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,8 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.07.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H141&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H141&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">10/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,8 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.01.08.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H140&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H140&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">09/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,6 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.05.06.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H139&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H139&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">09/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">150,2 kg</td>
+    <td>Expedição FLV</td><td>Anderson Souza</td><td class="mono">03.033.35.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H138&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H138&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">06/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,8 kg</td>
+    <td>Expedição FLV</td><td>Ezequias de Oliveira</td><td class="mono">03.033.07.04.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H137&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H137&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">05/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,0 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.29.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H136&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H136&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">04/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,2 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.05.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H135&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H135&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">04/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,0 kg</td>
+    <td>Expedição FLV</td><td>Ezequias de Oliveira</td><td class="mono">03.033.37.06.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H134&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H134&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">03/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,0 kg</td>
+    <td>Expedição FLV</td><td>Ezequias de Oliveira</td><td class="mono">03.033.07.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H133&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H133&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">01/06/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Amarelo</td>
+    <td class="mono">22,0 un</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono"></td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H132&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H132&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">01/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,0 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.03.04.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H131&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H131&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">01/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,0 kg</td>
+    <td>Recebimento Mercearia</td><td>Josimar Lima</td><td class="mono">03.033.47.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H130&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H130&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">01/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,0 kg</td>
+    <td>Perecível</td><td>Wagner Carlos</td><td class="mono">03.033.45.06.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H129&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H129&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">01/06/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,6 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.43.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H128&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H128&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">29/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,8 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.45.08.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H127&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H127&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">28/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,2 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.17.08.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H126&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H126&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">28/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,2 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.09.06.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H125&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H125&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">28/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,6 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">3033.47.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H124&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H124&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">27/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,4 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.45.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H123&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H123&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">27/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">150,6 kg</td>
+    <td>Recebimento Mercearia</td><td>Josimar Lima</td><td class="mono">03.033.13.16.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H122&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H122&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">26/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,6 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.47.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H121&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H121&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">25/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,6 kg</td>
+    <td>Recebimento Mercearia</td><td>Jefferson Rouxinol</td><td class="mono"></td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H120&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H120&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">25/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,6 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.01.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H119&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H119&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">21/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">140,4 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">3033.51.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H110&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H110&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">19/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">139,6 kg</td>
+    <td>Recebimento Mercearia</td><td>Josimar Lima</td><td class="mono">03.033.11.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H118&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H118&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">19/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,8 kg</td>
+    <td>Recebimento FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.41.8.1.</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H117&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H117&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">19/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">140,4 kg</td>
+    <td>Perecível</td><td>REGINALDO</td><td class="mono">03.033.43.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H109&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H109&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">19/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">139,6 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.41.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H108&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H108&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">19/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,8 kg</td>
+    <td>Expedição FLV</td><td>Carlos Marcelo</td><td class="mono">03.033.9.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H107&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H107&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">17/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,0 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.43.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H116&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H116&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">15/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,8 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.007.08</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H106&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H106&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">13/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">142,2 kg</td>
+    <td>Recebimento Mercearia</td><td>Josimar Lima</td><td class="mono">03.033.037.04</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H115&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H115&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">13/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,2 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.37.02</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H114&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H114&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">13/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">140,6 kg</td>
+    <td>Recebimento FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.035.08</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H113&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H113&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">13/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,4 kg</td>
+    <td>Recebimento FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.035.06</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H112&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H112&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">13/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">142,6 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.29.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H111&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H111&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">12/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">142,6 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.5.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H105&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H105&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">12/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">142,6 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.29.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H104&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H104&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">11/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,2 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.7.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H102&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H102&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">11/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,6 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.51.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H101&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H101&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">09/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,6 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.17.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H100&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H100&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">08/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,0 kg</td>
+    <td>Recebimento Mercearia</td><td>Josimar Lima</td><td class="mono">03.033.15.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H103&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H103&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">06/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,4 kg</td>
+    <td>Recebimento FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.7.10.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H099&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H099&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">06/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,8 kg</td>
+    <td>Recebimento FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.11.10.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H098&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H098&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">04/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,4 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.3.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H097&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H097&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">04/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,8 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.11.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H096&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H096&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">04/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">138,0 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.1.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H095&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H095&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">04/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,8 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.9.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H094&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H094&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">04/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,6 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.11.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H093&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H093&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">04/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,2 kg</td>
+    <td>Recebimento FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.7.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H091&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H091&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">04/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,6 kg</td>
+    <td>Recebimento FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.5.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H090&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H090&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">04/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,8 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.3.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H089&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H089&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">03/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,8 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.3.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H092&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H092&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">01/05/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,8 kg</td>
+    <td>Recebimento FLV</td><td>Faustino Reis</td><td class="mono">03.033.1.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H088&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H088&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">29/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">142,8 kg</td>
+    <td>Recebimento FLV</td><td>Faustino Reis</td><td class="mono">03.033.1.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H087&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H087&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">27/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">150,8 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.29.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H086&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H086&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">26/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,2 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.39.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H085&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H085&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">24/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,6 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.27.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H084&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H084&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">24/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,2 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.11.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H083&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H083&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">24/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,2 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.17.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H082&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H082&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">23/04/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Laranja</td>
+    <td class="mono">4,0 un</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.66.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H081&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H081&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">23/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,6 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.01.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H080&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H080&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">23/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,0 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.7.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H079&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H079&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">23/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,0 kg</td>
+    <td>Perecível</td><td>Wagner Carlos</td><td class="mono">03.033.17.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H078&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H078&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">23/04/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Azul</td>
+    <td class="mono">10,0 un</td>
+    <td>Perecível</td><td>Wagner Carlos</td><td class="mono">03.033.23.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H077&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H077&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">22/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,8 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.43.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H076&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H076&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">22/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">149,4 kg</td>
+    <td>Recebimento Mercearia</td><td>Josimar Lima</td><td class="mono">03.033.39.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H075&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H075&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">21/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,4 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.37.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H074&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H074&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">21/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,8 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.3.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H073&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H073&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">18/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,8 kg</td>
+    <td>Expedição FLV</td><td>EZEQUIAS</td><td class="mono">03.33.35.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H072&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H072&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">17/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">149,4 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.33.11.10.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H071&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H071&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">16/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">138,4 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.13.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H070&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H070&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">16/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,0 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.17.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H069&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H069&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">16/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,8 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.17.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H068&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H068&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">14/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,8 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.41.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H067&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H067&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">14/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">140,8 kg</td>
+    <td>Expedição Mercearia</td><td>NAO INFORMADO</td><td class="mono">03.033.43.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H066&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H066&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">14/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,8 kg</td>
+    <td>Expedição Mercearia</td><td>NAO INFORMADO</td><td class="mono">03.033.45.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H065&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H065&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">14/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,8 kg</td>
+    <td>Expedição Mercearia</td><td>NAO INFORMADO</td><td class="mono">03.033.45.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H064&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H064&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">14/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,0 kg</td>
+    <td>Expedição Mercearia</td><td>NAO INFORMADO</td><td class="mono">03.033.43.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H063&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H063&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">14/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">140,0 kg</td>
+    <td>Expedição Mercearia</td><td>NAO INFORMADO</td><td class="mono">03.033.45.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H062&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H062&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">13/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,4 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.5.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H061&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H061&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">13/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,2 kg</td>
+    <td>Recebimento Mercearia</td><td>Josimar Lima</td><td class="mono">03.33.5.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H060&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H060&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">12/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,0 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.13.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H059&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H059&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">10/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,0 kg</td>
+    <td>Expedição FLV</td><td>Faustino Reis</td><td class="mono">03.033.15.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H058&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H058&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">10/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,2 kg</td>
+    <td>Expedição Mercearia</td><td>Josimar Lima</td><td class="mono">03.033.15.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H057&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H057&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">08/04/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Verde</td>
+    <td class="mono">5,0 un</td>
+    <td>Expedição FLV</td><td>Faustino Reis</td><td class="mono">03.033.23.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H056&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H056&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">08/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,0 kg</td>
+    <td>Expedição FLV</td><td>Faustino Reis</td><td class="mono">03.033.19.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H055&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H055&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">08/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,0 kg</td>
+    <td>Expedição FLV</td><td>Faustino Reis</td><td class="mono">03.033.29.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H054&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H054&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">07/04/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Amarelo</td>
+    <td class="mono">12,0 un</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.21.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H053&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H053&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">06/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,4 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.13.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H052&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H052&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">06/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,8 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.31.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H051&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H051&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">04/04/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,6 kg</td>
+    <td>Expedição FLV</td><td>Ezequias de Oliveira</td><td class="mono">03.033.1.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H050&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H050&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">31/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,6 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.15.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H049&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H049&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">30/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,2 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.3.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H048&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H048&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">30/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,0 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.5.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H047&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H047&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">26/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,4 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.11.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H046&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H046&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">25/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">145,8 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.33.11.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H045&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H045&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">25/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,6 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.9.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H044&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H044&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">25/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,8 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.9.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H043&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H043&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">25/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,2 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.9.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H042&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H042&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">24/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,0 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.13.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H041&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H041&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">24/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,2 kg</td>
+    <td>Recebimento Mercearia</td><td>Massami Tanabu</td><td class="mono">03.033.27.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H040&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H040&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">23/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,2 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.19.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H039&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H039&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">23/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,2 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.11.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H038&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H038&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">23/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,2 kg</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.7.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H037&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H037&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">20/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,6 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.7.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H036&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H036&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">20/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,6 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">03.033.5.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H035&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H035&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">19/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,2 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.01.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H034&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H034&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">18/03/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Amarelo</td>
+    <td class="mono">5,0 un</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.21.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H033&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H033&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">18/03/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Amarelo</td>
+    <td class="mono">5,0 un</td>
+    <td>Expedição Mercearia</td><td>Railton Santana</td><td class="mono">03.033.21.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H032&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H032&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">17/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,8 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.7.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H031&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H031&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">17/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,6 kg</td>
+    <td>Recebimento FLV</td><td>Faustino Reis</td><td class="mono">33.29.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H030&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H030&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">17/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">142,0 kg</td>
+    <td>Recebimento FLV</td><td>Faustino Reis</td><td class="mono">33.15.10.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H029&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H029&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">13/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,4 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.3.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H028&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H028&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">13/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,4 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">33.3.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H027&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H027&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">13/03/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Verde</td>
+    <td class="mono">5,0 un</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">03.033.01.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H026&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H026&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">13/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">138,0 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">33.29.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H025&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H025&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">13/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">150,4 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">33.23.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H024&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H024&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">11/03/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Amarelo</td>
+    <td class="mono">4,0 un</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.21.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H023&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H023&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">11/03/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Amarelo</td>
+    <td class="mono">4,0 un</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">33.21.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H022&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H022&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">11/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">142,4 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">33.7.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H021&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H021&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">11/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,2 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">33.5.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H020&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H020&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">10/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,8 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.3.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H019&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H019&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">10/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,8 kg</td>
+    <td>Reversa</td><td>Carlos Marcelo</td><td class="mono">33.9.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H018&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H018&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">09/03/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Amarelo</td>
+    <td class="mono">4,0 un</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.21.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H017&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H017&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">09/03/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Amarelo</td>
+    <td class="mono">2,0 un</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.21.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H016&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H016&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">09/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,4 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">03.033.17.10.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H015&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H015&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">09/03/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Amarelo</td>
+    <td class="mono">2,0 un</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono"></td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H014&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H014&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">09/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">144,4 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">33.1.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H013&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H013&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">06/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,6 kg</td>
+    <td>Recebimento Mercearia</td><td>Josimar Lima</td><td class="mono">33.1.6.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H012&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H012&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">06/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">139,6 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">33.1.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H011&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H011&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">03/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,0 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">33.11.10.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H010&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H010&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">03/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">148,0 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">33.1.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H009&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H009&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">03/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,6 kg</td>
+    <td>Expedição FLV</td><td>Jairo Pereira da Silva</td><td class="mono">33.1.4.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H008&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H008&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">03/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">143,8 kg</td>
+    <td>Recebimento FLV</td><td>Jairo Pereira da Silva</td><td class="mono">33.7.10.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H007&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H007&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">02/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,8 kg</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.01.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H006&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H006&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">02/03/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Verde</td>
+    <td class="mono">15,0 un</td>
+    <td>Expedição FLV</td><td>Adilson Pereira da Silva</td><td class="mono">03.033.01.02.01</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H005&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H005&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">02/03/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Amarelo</td>
+    <td class="mono">6,0 un</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono"></td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H004&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H004&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">02/03/2026</td>
+    <td><span class="bdg a">aplic</span> Aplicador Amarelo</td>
+    <td class="mono">9,0 un</td>
+    <td>Recebimento Mercearia</td><td>Josimar Lima</td><td class="mono"></td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H003&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H003&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">02/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">146,2 kg</td>
+    <td>Reversa</td><td>Hobede Pinheiros</td><td class="mono">33.5.8.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H002&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H002&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">02/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">141,2 kg</td>
+    <td>Expedição Mercearia</td><td>Jefferson Rouxinol</td><td class="mono">33.3.2.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H001&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H001&#39;)">✕</button></td>
+  </tr><tr>
+    <td class="mono">02/03/2026</td>
+    <td><span class="bdg f">filme</span> Filme Eco Stretch</td>
+    <td class="mono">147,2 kg</td>
+    <td>Recebimento Mercearia</td><td>Josimar Lima</td><td class="mono">33.5.10.1</td>
+    <td style="color:var(--text3)">histórico</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editar(&#39;H000&#39;)">✎</button> <button class="btn sm danger" onclick="excluir(&#39;H000&#39;)">✕</button></td>
+  </tr></tbody></table>
       </div>
     </div>
   </div>
@@ -157,13 +1369,13 @@ tr:hover td{background:var(--bg3)}
     <!-- FAROL DE COBERTURA -->
     <div class="panel" id="farol-panel">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
-        <div class="pl" style="margin-bottom:0">Farol de cobertura · dias de material restante</div>
+        <div class="pl" style="margin-bottom:0">Farol de cobertura · semanas de material restante</div>
         <button class="btn sm" onclick="toggleSaldoForm()">⚙ Atualizar saldo</button>
       </div>
-      <div id="saldo-form" style="display:none;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:14px;margin-bottom:14px">
+      <div id="saldo-form" style="display: none; background: var(--bg3); border: 1px solid var(--border2); border-radius: 9px; padding: 14px; margin-bottom: 14px;">
         <div class="row" style="margin-bottom:10px">
-          <div class="fg"><div class="fl">Material</div><select id="s-mat"></select></div>
-          <div class="fg"><div class="fl">Saldo contado <span id="s-un" class="mono" style="color:var(--text3)"></span></div><input type="number" id="s-qty" step="0.1" placeholder="ex: 2400"></div>
+          <div class="fg"><div class="fl">Material</div><select id="s-mat"><option value="">Selecionar...</option><option value="228752">Filme Eco Stretch</option><option value="236566">Aplicador Amarelo</option><option value="236567">Aplicador Laranja</option><option value="236568">Aplicador Azul</option><option value="236569">Aplicador Verde</option></select></div>
+          <div class="fg"><div class="fl">Saldo contado <span id="s-un" class="mono" style="color:var(--text3)">(KG)</span></div><input type="number" id="s-qty" step="0.1" placeholder="ex: 2400"></div>
           <div class="fg"><div class="fl">Data da contagem <span style="color:var(--text3)">(posição fim do dia)</span></div><input type="date" id="s-data"></div>
         </div>
         <div class="bar" style="margin-bottom:0">
@@ -175,23 +1387,121 @@ tr:hover td{background:var(--bg3)}
       <div id="farol-body"></div>
     </div>
 
-    <div class="cards" id="c-cards"></div>
+    <div class="cards" id="c-cards">
+    <div class="mc"><div class="l">Filme liberado</div><div class="v g">22.783,2<span style="font-size:13px"> kg</span></div></div>
+    <div class="mc"><div class="l">Aplicador liberado</div><div class="v o">114<span style="font-size:13px"> un</span></div></div>
+    <div class="mc"><div class="l">Custo total</div><div class="v" style="font-size:19px">R$ 394.599,11</div><div class="h">filme + aplicador</div></div>
+    <div class="mc"><div class="l">Lançamentos</div><div class="v">173</div><div class="h">6 áreas ativas</div></div></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" id="dash-grid">
       <div class="panel">
         <div class="pl">Progresso por área · % do volume de filme</div>
         <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap">
-          <div id="donut" style="flex-shrink:0"></div>
-          <div id="donut-leg" style="flex:1;min-width:200px;font-size:13px"></div>
+          <div id="donut" style="flex-shrink:0"><svg width="190" height="190" viewBox="0 0 190 190"><circle cx="95" cy="95" r="78" fill="none" stroke="#2d7a22" stroke-width="22" stroke-dasharray="194.01163067330756 296.0768232867001" stroke-dashoffset="0" transform="rotate(-90 95 95)"></circle><circle cx="95" cy="95" r="78" fill="none" stroke="#e85d04" stroke-width="22" stroke-dasharray="139.8470389095826 350.2414150504251" stroke-dashoffset="-194.01163067330756" transform="rotate(-90 95 95)"></circle><circle cx="95" cy="95" r="78" fill="none" stroke="#f5a623" stroke-width="22" stroke-dasharray="46.86377268326103 443.22468127674665" stroke-dashoffset="-333.8586695828902" transform="rotate(-90 95 95)"></circle><circle cx="95" cy="95" r="78" fill="none" stroke="#7b3fa0" stroke-width="22" stroke-dasharray="46.76482227733842 443.3236316826693" stroke-dashoffset="-380.72244226615123" transform="rotate(-90 95 95)"></circle><circle cx="95" cy="95" r="78" fill="none" stroke="#1565c0" stroke-width="22" stroke-dasharray="43.85654078152603 446.2319131784817" stroke-dashoffset="-427.48726454348963" transform="rotate(-90 95 95)"></circle><circle cx="95" cy="95" r="78" fill="none" stroke="#c62828" stroke-width="22" stroke-dasharray="18.74464863499204 471.3438053250157" stroke-dashoffset="-471.34380532501564" transform="rotate(-90 95 95)"></circle>
+    <text x="95" y="90" text-anchor="middle" font-family="DM Mono" font-size="22" font-weight="600" fill="#1a2214">22.783</text>
+    <text x="95" y="108" text-anchor="middle" font-size="11" fill="#8a9e7e">kg de filme</text></svg></div>
+          <div id="donut-leg" style="flex:1;min-width:200px;font-size:13px">
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0">
+      <span style="width:11px;height:11px;border-radius:3px;background:#2d7a22"></span>
+      <span style="width:20px">🥇</span>
+      <span style="flex:1">Expedição FLV</span>
+      <span class="mono" style="font-weight:600">9.019,2 kg</span>
+      <span class="mono" style="color:#8a9e7e;width:46px;text-align:right">39.6%</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0">
+      <span style="width:11px;height:11px;border-radius:3px;background:#e85d04"></span>
+      <span style="width:20px">🥈</span>
+      <span style="flex:1">Expedição Mercearia</span>
+      <span class="mono" style="font-weight:600">6.501,2 kg</span>
+      <span class="mono" style="color:#8a9e7e;width:46px;text-align:right">28.5%</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0">
+      <span style="width:11px;height:11px;border-radius:3px;background:#f5a623"></span>
+      <span style="width:20px">🥉</span>
+      <span style="flex:1">Reversa</span>
+      <span class="mono" style="font-weight:600">2.178,6 kg</span>
+      <span class="mono" style="color:#8a9e7e;width:46px;text-align:right">9.6%</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0">
+      <span style="width:11px;height:11px;border-radius:3px;background:#7b3fa0"></span>
+      <span style="width:20px">#4</span>
+      <span style="flex:1">Recebimento FLV</span>
+      <span class="mono" style="font-weight:600">2.174,0 kg</span>
+      <span class="mono" style="color:#8a9e7e;width:46px;text-align:right">9.5%</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0">
+      <span style="width:11px;height:11px;border-radius:3px;background:#1565c0"></span>
+      <span style="width:20px">#5</span>
+      <span style="flex:1">Recebimento Mercearia</span>
+      <span class="mono" style="font-weight:600">2.038,8 kg</span>
+      <span class="mono" style="color:#8a9e7e;width:46px;text-align:right">8.9%</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0">
+      <span style="width:11px;height:11px;border-radius:3px;background:#c62828"></span>
+      <span style="width:20px">#6</span>
+      <span style="flex:1">Perecível</span>
+      <span class="mono" style="font-weight:600">871,4 kg</span>
+      <span class="mono" style="color:#8a9e7e;width:46px;text-align:right">3.8%</span>
+    </div></div>
         </div>
       </div>
       <div class="panel">
         <div class="pl">Volume por destino · kg de filme</div>
-        <div id="bars-dest"></div>
+        <div id="bars-dest">
+    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px">
+      <span style="width:150px">Expedição FLV</span>
+      <div style="flex:1;background:#eef1ea;border-radius:5px;height:14px;overflow:hidden"><div style="width:100%;height:100%;background:#2d7a22"></div></div>
+      <span class="mono" style="width:78px;text-align:right;font-weight:600">9.019,2 kg</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px">
+      <span style="width:150px">Expedição Mercearia</span>
+      <div style="flex:1;background:#eef1ea;border-radius:5px;height:14px;overflow:hidden"><div style="width:72.08178108923188%;height:100%;background:#e85d04"></div></div>
+      <span class="mono" style="width:78px;text-align:right;font-weight:600">6.501,2 kg</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px">
+      <span style="width:150px">Reversa</span>
+      <div style="flex:1;background:#eef1ea;border-radius:5px;height:14px;overflow:hidden"><div style="width:24.155135710484302%;height:100%;background:#f5a623"></div></div>
+      <span class="mono" style="width:78px;text-align:right;font-weight:600">2.178,6 kg</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px">
+      <span style="width:150px">Recebimento FLV</span>
+      <div style="flex:1;background:#eef1ea;border-radius:5px;height:14px;overflow:hidden"><div style="width:24.104133404293066%;height:100%;background:#7b3fa0"></div></div>
+      <span class="mono" style="width:78px;text-align:right;font-weight:600">2.174,0 kg</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px">
+      <span style="width:150px">Recebimento Mercearia</span>
+      <div style="flex:1;background:#eef1ea;border-radius:5px;height:14px;overflow:hidden"><div style="width:22.605109100585423%;height:100%;background:#1565c0"></div></div>
+      <span class="mono" style="width:78px;text-align:right;font-weight:600">2.038,8 kg</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px">
+      <span style="width:150px">Perecível</span>
+      <div style="flex:1;background:#eef1ea;border-radius:5px;height:14px;overflow:hidden"><div style="width:9.661610785879015%;height:100%;background:#c62828"></div></div>
+      <span class="mono" style="width:78px;text-align:right;font-weight:600">871,4 kg</span>
+    </div></div>
         <div class="pl" style="margin-top:18px">Aplicadores · unidades</div>
-        <div id="bars-aplic"></div>
+        <div id="bars-aplic">
+    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px">
+      <span style="width:150px">Amarelo</span>
+      <div style="flex:1;background:#eef1ea;border-radius:5px;height:14px;overflow:hidden"><div style="width:100%;height:100%;background:#f5a623"></div></div>
+      <span class="mono" style="width:78px;text-align:right;font-weight:600">75 un</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px">
+      <span style="width:150px">Verde</span>
+      <div style="flex:1;background:#eef1ea;border-radius:5px;height:14px;overflow:hidden"><div style="width:33.33333333333333%;height:100%;background:#2d7a22"></div></div>
+      <span class="mono" style="width:78px;text-align:right;font-weight:600">25 un</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px">
+      <span style="width:150px">Azul</span>
+      <div style="flex:1;background:#eef1ea;border-radius:5px;height:14px;overflow:hidden"><div style="width:13.333333333333334%;height:100%;background:#1565c0"></div></div>
+      <span class="mono" style="width:78px;text-align:right;font-weight:600">10 un</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px">
+      <span style="width:150px">Laranja</span>
+      <div style="flex:1;background:#eef1ea;border-radius:5px;height:14px;overflow:hidden"><div style="width:5.333333333333334%;height:100%;background:#e85d04"></div></div>
+      <span class="mono" style="width:78px;text-align:right;font-weight:600">4 un</span>
+    </div></div>
       </div>
     </div>
-    <div class="panel"><div class="pl">Por solicitante</div><div style="overflow:auto"><table><thead><tr><th>Solicitante</th><th>Filme (kg)</th><th>Aplicador (un)</th></tr></thead><tbody id="c-sol"></tbody></table></div></div>
+    <div class="panel"><div class="pl">Por solicitante</div><div style="overflow:auto"><table><thead><tr><th>Solicitante</th><th>Filme (kg)</th><th>Aplicador (un)</th></tr></thead><tbody id="c-sol"><tr><td>Jairo Pereira da Silva</td><td class="mono">5.521,0</td><td class="mono">5</td></tr><tr><td>Jefferson Rouxinol</td><td class="mono">3.484,8</td><td class="mono">56</td></tr><tr><td>Adilson Pereira da Silva</td><td class="mono">2.755,2</td><td class="mono">15</td></tr><tr><td>Railton Santana</td><td class="mono">2.162,4</td><td class="mono">10</td></tr><tr><td>Hobede Pinheiros</td><td class="mono">2.033,8</td><td class="mono">4</td></tr><tr><td>Josimar Lima</td><td class="mono">1.882,2</td><td class="mono">9</td></tr><tr><td>Ezequias de Oliveira</td><td class="mono">1.314,0</td><td class="mono">0</td></tr><tr><td>Faustino Reis</td><td class="mono">1.158,2</td><td class="mono">5</td></tr><tr><td>Wagner Carlos</td><td class="mono">731,0</td><td class="mono">10</td></tr><tr><td>NAO INFORMADO</td><td class="mono">715,4</td><td class="mono">0</td></tr><tr><td>Massami Tanabu</td><td class="mono">295,2</td><td class="mono">0</td></tr><tr><td>Carlos Marcelo</td><td class="mono">293,6</td><td class="mono">0</td></tr><tr><td>Anderson Souza</td><td class="mono">150,2</td><td class="mono">0</td></tr><tr><td>EZEQUIAS</td><td class="mono">145,8</td><td class="mono">0</td></tr><tr><td>REGINALDO</td><td class="mono">140,4</td><td class="mono">0</td></tr></tbody></table></div></div>
   </div>
 
   <!-- BASES -->
@@ -207,13 +1517,13 @@ tr:hover td{background:var(--bg3)}
   </div>
 
 </div>
-<div id="toast" class="toast"></div>
+<div id="toast" class="toast" style="display: none;">Saldo atualizado</div>
 
 <!-- MODAL EDIÇÃO -->
 <div id="modal" style="display:none;position:fixed;inset:0;background:rgba(20,30,15,.45);z-index:300;align-items:center;justify-content:center;padding:18px">
   <div style="background:#fff;border-radius:14px;max-width:640px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
     <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
-      <div><div style="font-size:16px;font-weight:600">Editar lançamento</div><div id="m-info" style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace"></div></div>
+      <div><div style="font-size:16px;font-weight:600">Editar lançamento</div><div id="m-info" style="font-size:12px;color:var(--text3);font-family:&#39;DM Mono&#39;,monospace"></div></div>
       <button class="btn sm" onclick="fecharModal()">✕ Fechar</button>
     </div>
     <div style="padding:22px">
@@ -249,8 +1559,8 @@ function fbst(t,c){const el=document.getElementById('fbst');if(el){el.textConten
 
 let LANC=[], SOL=[...M.sol], destSel='', editId=null;
 let EST={}; // saldos informados: {matCod:{qtd,data,ts}}
-const FAROL_LIM={vermelho:7, amarelo:15}; // dias: <7 vermelho, 7-15 amarelo, >15 verde
-const FAROL_JANELA=30; // dias corridos para média de consumo
+const FAROL_LIM={vermelho:1, amarelo:2}; // semanas: <1 vermelho, 1-2 amarelo, >2 verde
+const FAROL_SEMANAS=4; // semanas fechadas (seg a dom) para média de consumo
 const fmt=(n,d=1)=>n==null?'—':Number(n).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
 const matByNome=n=>M.mat.find(m=>m.nome===n);
 const isFilme=n=>n&&n.includes('Filme');
@@ -398,13 +1708,24 @@ function coberturaMat(m){
   // saldo atual = contagem - liberações lançadas APÓS a data da contagem (posição fim do dia)
   const consumido=LANC.filter(r=>r.matCod==m.cod&&r.data>e.data).reduce((s,r)=>s+r.qty,0);
   const saldo=Math.max(0,e.qtd-consumido);
-  // média diária: últimos FAROL_JANELA dias corridos a partir do lançamento mais recente do material (ou hoje)
-  const hoje=new Date().toISOString().slice(0,10);
-  const corte=new Date(Date.now()-FAROL_JANELA*864e5).toISOString().slice(0,10);
-  const cons30=LANC.filter(r=>r.matCod==m.cod&&r.data>corte&&r.data<=hoje).reduce((s,r)=>s+r.qty,0);
-  const media=cons30/FAROL_JANELA;
-  const dias=media>0?saldo/media:null;
-  return {saldo,media,dias,cons30,contagem:e};
+  // semanas fechadas (seg a dom): ignora a semana corrente incompleta
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const dow=(hoje.getDay()+6)%7; // 0=seg ... 6=dom
+  const ultDom=new Date(hoje.getTime()-(dow+1)*864e5); // domingo da última semana fechada
+  const iso=d=>d.toISOString().slice(0,10);
+  const sem=[]; // da mais antiga para a mais recente
+  for(let i=FAROL_SEMANAS-1;i>=0;i--){
+    const fim=new Date(ultDom.getTime()-7*i*864e5);
+    const ini=new Date(fim.getTime()-6*864e5);
+    const tot=LANC.filter(r=>r.matCod==m.cod&&r.data>=iso(ini)&&r.data<=iso(fim)).reduce((s,r)=>s+r.qty,0);
+    sem.push({ini:iso(ini),fim:iso(fim),tot});
+  }
+  const media=sem.reduce((s,w)=>s+w.tot,0)/FAROL_SEMANAS;
+  const semanas=media>0?saldo/media:null;
+  // tendência: última semana fechada vs média
+  const ult=sem[sem.length-1].tot;
+  const tend=media>0?(ult/media-1)*100:0;
+  return {saldo,media,semanas,sem,tend,contagem:e};
 }
 function rFarol(){
   const body=document.getElementById('farol-body');
@@ -414,24 +1735,44 @@ function rFarol(){
     return;
   }
   body.innerHTML='<div class="farol-grid">'+itens.map(({m,c})=>{
-    let cls,rotulo,diasTxt,fimTxt='';
-    if(c.dias===null){cls='verde';rotulo='sem consumo na janela';diasTxt='∞';}
+    let cls,rotulo,semTxt,fimTxt='';
+    if(c.semanas===null){cls='verde';rotulo='sem consumo nas últimas semanas';semTxt='∞';}
     else{
-      cls=c.dias<FAROL_LIM.vermelho?'vermelho':c.dias<=FAROL_LIM.amarelo?'amarelo':'verde';
+      cls=c.semanas<FAROL_LIM.vermelho?'vermelho':c.semanas<=FAROL_LIM.amarelo?'amarelo':'verde';
       rotulo=cls==='vermelho'?'crítico · programar reposição':cls==='amarelo'?'atenção · acionar compra':'confortável';
-      diasTxt=c.dias>=100?Math.floor(c.dias):c.dias.toFixed(1);
-      const fim=new Date(Date.now()+c.dias*864e5);
+      semTxt=c.semanas>=20?Math.floor(c.semanas):c.semanas.toFixed(1);
+      const fim=new Date(Date.now()+c.semanas*7*864e5);
       fimTxt=`Previsão de fim: <b>${fim.toLocaleDateString('pt-BR')}</b><br>`;
     }
-    const pct=c.dias===null?100:Math.min(100,c.dias/(FAROL_LIM.amarelo*2)*100);
+    const pct=c.semanas===null?100:Math.min(100,c.semanas/(FAROL_LIM.amarelo*2)*100);
     const corBar=cls==='vermelho'?'var(--red)':cls==='amarelo'?'var(--yellow)':'var(--green)';
+    // tendência da última semana fechada vs média
+    let tendHtml='';
+    if(c.media>0&&Math.abs(c.tend)>=10){
+      const sobe=c.tend>0;
+      tendHtml=`<span style="color:${sobe?'var(--red)':'var(--green)'};font-weight:600">${sobe?'▲':'▼'} ${Math.abs(c.tend).toFixed(0)}% ${sobe?'acima':'abaixo'} da média</span> na última semana<br>`;
+    }
+    // mini barras das semanas fechadas
+    const maxSem=Math.max(...c.sem.map(w=>w.tot),1);
+    const mini=c.sem.map(w=>{
+      const h=Math.max(3,w.tot/maxSem*26);
+      const dd=w.ini.split('-');
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+        <span class="mono" style="font-size:9px;color:var(--text2)">${fmt(w.tot,0)}</span>
+        <div style="width:26px;height:${h}px;background:${corBar};opacity:.75;border-radius:3px 3px 0 0"></div>
+        <span style="font-size:9px;color:var(--text3)">${dd[2]}/${dd[1]}</span>
+      </div>`;
+    }).join('');
     return `<div class="farol-item ${cls}">
       <div class="farol-top"><span class="farol-dot"></span><span class="farol-nome">${m.nome}</span></div>
-      <div class="farol-dias">${diasTxt}<span> dias de cobertura</span></div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+        <div class="farol-dias">${semTxt}<span> semanas de cobertura</span></div>
+        <div style="display:flex;align-items:flex-end;gap:5px" title="Consumo das últimas ${FAROL_SEMANAS} semanas fechadas (seg a dom)">${mini}</div>
+      </div>
       <div class="farol-barwrap"><div class="farol-barfill" style="width:${pct}%;background:${corBar}"></div></div>
       <div class="farol-det">
-        Saldo atual: <b>${fmt(c.saldo,m.un==='KG'?1:0)} ${m.un.toLowerCase()}</b> · média <b>${fmt(c.media,1)}/dia</b> (últ. ${FAROL_JANELA}d)<br>
-        ${fimTxt}<span style="color:${corBar};font-weight:600">${rotulo}</span> · contagem de ${c.contagem.data.split('-').reverse().join('/')}
+        Saldo atual: <b>${fmt(c.saldo,m.un==='KG'?1:0)} ${m.un.toLowerCase()}</b> · média <b>${fmt(c.media,1)} ${m.un.toLowerCase()}/sem</b> (${FAROL_SEMANAS} sem fechadas)<br>
+        ${tendHtml}${fimTxt}<span style="color:${corBar};font-weight:600">${rotulo}</span> · contagem de ${c.contagem.data.split('-').reverse().join('/')}
       </div>
     </div>`;
   }).join('')+'</div>';
@@ -528,4 +1869,5 @@ function fbLoad(){
 }
 initForm();rConsumo();fbLoad();
 </script>
+
 </body></html>
