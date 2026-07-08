@@ -96,7 +96,7 @@ tr:hover td{background:var(--bg3)}
     <div class="nav-item active" onclick="show(&#39;consumo&#39;,this)"><span class="ni">📊</span><span>Dashboard</span></div>
     <div class="nav-item" onclick="show(&#39;bases&#39;,this)"><span class="ni">🗂️</span><span>Bases</span></div>
   </div>
-  <div class="sb-foot"><span id="fbst" class="fbst" style="color: var(--green);">✓ 173 lançamentos</span><br>v1.2 · farol semanal · rua 33</div>
+  <div class="sb-foot"><span id="fbst" class="fbst" style="color: var(--green);">✓ 173 lançamentos</span><br>v1.4 · ajuste inventário + CC 342006 · rua 33</div>
 </div>
 <div class="main">
 
@@ -1366,11 +1366,41 @@ tr:hover td{background:var(--bg3)}
   <div id="pg-consumo" class="page active">
     <div class="ph"><div class="pt">Dashboard</div><div class="ps">Visão geral da liberação. Filme em kg, aplicador em un, nunca somados.</div></div>
 
+    <!-- FILTRO DE ÁREA + PERÍODO -->
+    <div class="panel" style="padding:14px 18px">
+      <div class="chips" id="c-chips" style="margin-bottom:12px"></div>
+      <div class="bar" style="margin-bottom:0">
+        <span style="font-size:12px;color:var(--text3)">de</span><input type="date" id="c-de" onchange="rConsumo()" style="width:auto">
+        <span style="font-size:12px;color:var(--text3)">até</span><input type="date" id="c-ate" onchange="rConsumo()" style="width:auto">
+        <button class="btn sm" onclick="perLimpar()">limpar</button>
+        <span id="c-percount" style="margin-left:auto;font-size:12px;color:var(--text3)"></span>
+      </div>
+    </div>
+
     <!-- FAROL DE COBERTURA -->
     <div class="panel" id="farol-panel">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
-        <div class="pl" style="margin-bottom:0">Farol de cobertura · semanas de material restante</div>
-        <button class="btn sm" onclick="toggleSaldoForm()">⚙ Atualizar saldo</button>
+        <div class="pl" style="margin-bottom:0">Farol de cobertura · semanas de material restante <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">· não sofre o filtro de período</span></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn sm" onclick="toggleAjusteForm()">± Ajuste de inventário</button>
+          <button class="btn sm" onclick="toggleSaldoForm()">⚙ Atualizar saldo</button>
+        </div>
+      </div>
+      <div id="ajuste-form" style="display:none;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:14px;margin-bottom:14px">
+        <div class="row" style="margin-bottom:10px">
+          <div class="fg"><div class="fl">Material</div><select id="a-mat"></select></div>
+          <div class="fg"><div class="fl">Tipo</div><select id="a-tipo"><option value="-1">Baixa (−)</option><option value="1">Entrada (+)</option></select></div>
+          <div class="fg"><div class="fl">Quantidade <span id="a-un" class="mono" style="color:var(--text3)"></span></div><input type="number" id="a-qty" step="0.1" min="0" placeholder="ex: 120"></div>
+          <div class="fg"><div class="fl">Data</div><input type="date" id="a-data"></div>
+        </div>
+        <div class="row" style="margin-bottom:10px">
+          <div class="fg"><div class="fl">Motivo (obrigatório)</div><input type="text" id="a-motivo" placeholder="ex: avaria de bobina, perda em rack, acerto de contagem"></div>
+        </div>
+        <div class="bar" style="margin-bottom:0">
+          <button class="btn sm primary" onclick="salvarAjuste()">Registrar ajuste</button>
+          <button class="btn sm" onclick="toggleAjusteForm()">Fechar</button>
+          <span style="font-size:11.5px;color:var(--text3)">Ajusta o saldo do farol sem gerar liberação. Fica registrado com data e motivo.</span>
+        </div>
       </div>
       <div id="saldo-form" style="display: none; background: var(--bg3); border: 1px solid var(--border2); border-radius: 9px; padding: 14px; margin-bottom: 14px;">
         <div class="row" style="margin-bottom:10px">
@@ -1551,7 +1581,7 @@ tr:hover td{background:var(--bg3)}
 </div>
 
 <script>
-const M = {"ends": ["03.033.01.02.01", "03.033.01.04.01", "03.033.01.06.01", "03.033.01.08.01", "03.033.01.10.01", "03.033.03.02.01", "03.033.03.04.01", "03.033.03.06.01", "03.033.03.08.01", "03.033.03.10.01", "03.033.05.02.01", "03.033.05.04.01", "03.033.05.06.01", "03.033.05.08.01", "03.033.05.10.01", "03.033.07.02.01", "03.033.07.04.01", "03.033.07.06.01", "03.033.07.08.01", "03.033.07.10.01", "03.033.09.02.01", "03.033.09.04.01", "03.033.09.06.01", "03.033.09.08.01", "03.033.09.10.01", "03.033.11.02.01", "03.033.11.04.01", "03.033.11.06.01", "03.033.11.08.01", "03.033.11.10.01", "03.033.13.02.01", "03.033.13.04.01", "03.033.13.06.01", "03.033.13.08.01", "03.033.13.10.01", "03.033.15.02.01", "03.033.15.04.01", "03.033.15.06.01", "03.033.15.08.01", "03.033.15.10.01", "03.033.17.02.01", "03.033.17.04.01", "03.033.17.06.01", "03.033.17.08.01", "03.033.17.10.01", "03.033.19.02.01", "03.033.19.04.01", "03.033.19.06.01", "03.033.19.08.01", "03.033.19.10.01", "03.033.21.02.01", "03.033.21.04.01", "03.033.21.06.01", "03.033.21.08.01", "03.033.21.10.01", "03.033.23.02.01", "03.033.23.04.01", "03.033.23.06.01", "03.033.23.08.01", "03.033.23.10.01", "03.033.25.02.01", "03.033.25.04.01", "03.033.25.06.01", "03.033.25.08.01", "03.033.25.10.01", "03.033.27.02.01", "03.033.27.04.01", "03.033.27.06.01", "03.033.27.08.01", "03.033.27.10.01", "03.033.29.02.01", "03.033.29.04.01", "03.033.29.06.01", "03.033.29.08.01", "03.033.29.10.01", "03.033.31.02.01", "03.033.31.04.01", "03.033.31.06.01", "03.033.31.08.01", "03.033.31.10.01", "03.033.33.02.01", "03.033.33.04.01", "03.033.33.06.01", "03.033.33.08.01", "03.033.33.10.01", "03.033.35.02.01", "03.033.35.04.01", "03.033.35.06.01", "03.033.35.08.01", "03.033.35.10.01", "03.033.37.02.01", "03.033.37.04.01", "03.033.37.06.01", "03.033.37.08.01", "03.033.37.10.01", "03.033.39.02.01", "03.033.39.04.01", "03.033.39.06.01", "03.033.39.08.01", "03.033.39.10.01", "03.033.41.02.01", "03.033.41.04.01", "03.033.41.06.01", "03.033.41.08.01", "03.033.41.10.01", "03.033.43.02.01", "03.033.43.04.01", "03.033.43.06.01", "03.033.43.08.01", "03.033.43.10.01", "03.033.45.02.01", "03.033.45.04.01", "03.033.45.06.01", "03.033.45.08.01", "03.033.45.10.01", "03.033.47.02.01", "03.033.47.04.01", "03.033.47.06.01", "03.033.47.08.01", "03.033.47.10.01", "03.033.49.02.01", "03.033.49.04.01", "03.033.49.06.01", "03.033.49.08.01", "03.033.49.10.01", "03.033.51.02.01", "03.033.51.04.01", "03.033.51.06.01", "03.033.51.08.01", "03.033.51.10.01", "03.033.53.02.01", "03.033.53.04.01", "03.033.53.06.01", "03.033.53.08.01", "03.033.53.10.01", "03.033.55.02.01", "03.033.55.04.01", "03.033.55.06.01", "03.033.55.08.01", "03.033.55.10.01", "03.033.57.02.01", "03.033.57.04.01", "03.033.57.06.01", "03.033.57.08.01", "03.033.57.10.01", "03.033.59.02.01", "03.033.59.04.01", "03.033.59.06.01", "03.033.59.08.01", "03.033.59.10.01", "03.033.61.02.01", "03.033.61.04.01", "03.033.61.06.01", "03.033.61.08.01", "03.033.61.10.01", "03.033.63.02.01", "03.033.63.04.01", "03.033.63.06.01", "03.033.63.08.01", "03.033.63.10.01", "03.033.65.02.01", "03.033.65.04.01", "03.033.65.06.01", "03.033.65.08.01", "03.033.65.10.01", "03.033.67.02.01", "03.033.67.04.01", "03.033.67.06.01", "03.033.67.08.01", "03.033.67.10.01", "03.033.69.02.01", "03.033.69.04.01", "03.033.69.06.01", "03.033.69.08.01", "03.033.69.10.01", "03.033.71.02.01", "03.033.71.04.01", "03.033.71.06.01", "03.033.71.08.01", "03.033.71.10.01", "03.033.73.02.01", "03.033.73.04.01", "03.033.73.06.01", "03.033.73.08.01", "03.033.73.10.01", "03.033.75.02.01", "03.033.75.04.01", "03.033.75.06.01", "03.033.75.08.01", "03.033.75.10.01", "03.033.77.02.01", "03.033.77.04.01", "03.033.77.06.01", "03.033.77.08.01", "03.033.77.10.01", "03.033.79.02.01", "03.033.79.04.01", "03.033.79.06.01", "03.033.79.08.01", "03.033.79.10.01", "03.033.81.02.01", "03.033.81.04.01", "03.033.81.06.01", "03.033.81.08.01", "03.033.81.10.01"], "sol": ["Alex Darci", "Anderson Souza", "Antônio Teixeira", "Carlos Marcelo", "Diogo Lucas", "Elton de Souza", "Fabiano Farias", "Faustino Reis", "Francisco Wesley", "Hobede Pinheiros", "Jefferson Rouxinol", "João de Lana", "Josimar Lima", "Jucivania Dantas", "Leandro Ferreira", "Lucas Honathan", "Melquisedeque", "Railton Santana", "Reginaldo Farias", "Renildo Britto", "Rodrigo Fernandes", "Rogério Souza", "Ronivon Santos", "Wagner Carlos", "Yasser Carvalho"], "mat": [{"cod": 228752, "nome": "Filme Eco Stretch", "un": "KG", "cor": null}, {"cod": 236566, "nome": "Aplicador Amarelo", "un": "UN", "cor": "#f5a623"}, {"cod": 236567, "nome": "Aplicador Laranja", "un": "UN", "cor": "#e85d04"}, {"cod": 236568, "nome": "Aplicador Azul", "un": "UN", "cor": "#1565c0"}, {"cod": 236569, "nome": "Aplicador Verde", "un": "UN", "cor": "#2d7a22"}], "cen": [{"destino": "Expedição FLV", "cod": 342010, "nome": "Logística FLV"}, {"destino": "Recebimento FLV", "cod": 342010, "nome": "Logística FLV"}, {"destino": "Expedição Mercearia", "cod": 342011, "nome": "Logística Mercearia"}, {"destino": "Recebimento Mercearia", "cod": 342011, "nome": "Logística Mercearia"}, {"destino": "Perecível", "cod": 342001, "nome": "Logística Perecíveis"}, {"destino": "Reversa", "cod": 342004, "nome": "Logística Reversa"}]};
+const M = {"ends": ["03.033.01.02.01", "03.033.01.04.01", "03.033.01.06.01", "03.033.01.08.01", "03.033.01.10.01", "03.033.03.02.01", "03.033.03.04.01", "03.033.03.06.01", "03.033.03.08.01", "03.033.03.10.01", "03.033.05.02.01", "03.033.05.04.01", "03.033.05.06.01", "03.033.05.08.01", "03.033.05.10.01", "03.033.07.02.01", "03.033.07.04.01", "03.033.07.06.01", "03.033.07.08.01", "03.033.07.10.01", "03.033.09.02.01", "03.033.09.04.01", "03.033.09.06.01", "03.033.09.08.01", "03.033.09.10.01", "03.033.11.02.01", "03.033.11.04.01", "03.033.11.06.01", "03.033.11.08.01", "03.033.11.10.01", "03.033.13.02.01", "03.033.13.04.01", "03.033.13.06.01", "03.033.13.08.01", "03.033.13.10.01", "03.033.15.02.01", "03.033.15.04.01", "03.033.15.06.01", "03.033.15.08.01", "03.033.15.10.01", "03.033.17.02.01", "03.033.17.04.01", "03.033.17.06.01", "03.033.17.08.01", "03.033.17.10.01", "03.033.19.02.01", "03.033.19.04.01", "03.033.19.06.01", "03.033.19.08.01", "03.033.19.10.01", "03.033.21.02.01", "03.033.21.04.01", "03.033.21.06.01", "03.033.21.08.01", "03.033.21.10.01", "03.033.23.02.01", "03.033.23.04.01", "03.033.23.06.01", "03.033.23.08.01", "03.033.23.10.01", "03.033.25.02.01", "03.033.25.04.01", "03.033.25.06.01", "03.033.25.08.01", "03.033.25.10.01", "03.033.27.02.01", "03.033.27.04.01", "03.033.27.06.01", "03.033.27.08.01", "03.033.27.10.01", "03.033.29.02.01", "03.033.29.04.01", "03.033.29.06.01", "03.033.29.08.01", "03.033.29.10.01", "03.033.31.02.01", "03.033.31.04.01", "03.033.31.06.01", "03.033.31.08.01", "03.033.31.10.01", "03.033.33.02.01", "03.033.33.04.01", "03.033.33.06.01", "03.033.33.08.01", "03.033.33.10.01", "03.033.35.02.01", "03.033.35.04.01", "03.033.35.06.01", "03.033.35.08.01", "03.033.35.10.01", "03.033.37.02.01", "03.033.37.04.01", "03.033.37.06.01", "03.033.37.08.01", "03.033.37.10.01", "03.033.39.02.01", "03.033.39.04.01", "03.033.39.06.01", "03.033.39.08.01", "03.033.39.10.01", "03.033.41.02.01", "03.033.41.04.01", "03.033.41.06.01", "03.033.41.08.01", "03.033.41.10.01", "03.033.43.02.01", "03.033.43.04.01", "03.033.43.06.01", "03.033.43.08.01", "03.033.43.10.01", "03.033.45.02.01", "03.033.45.04.01", "03.033.45.06.01", "03.033.45.08.01", "03.033.45.10.01", "03.033.47.02.01", "03.033.47.04.01", "03.033.47.06.01", "03.033.47.08.01", "03.033.47.10.01", "03.033.49.02.01", "03.033.49.04.01", "03.033.49.06.01", "03.033.49.08.01", "03.033.49.10.01", "03.033.51.02.01", "03.033.51.04.01", "03.033.51.06.01", "03.033.51.08.01", "03.033.51.10.01", "03.033.53.02.01", "03.033.53.04.01", "03.033.53.06.01", "03.033.53.08.01", "03.033.53.10.01", "03.033.55.02.01", "03.033.55.04.01", "03.033.55.06.01", "03.033.55.08.01", "03.033.55.10.01", "03.033.57.02.01", "03.033.57.04.01", "03.033.57.06.01", "03.033.57.08.01", "03.033.57.10.01", "03.033.59.02.01", "03.033.59.04.01", "03.033.59.06.01", "03.033.59.08.01", "03.033.59.10.01", "03.033.61.02.01", "03.033.61.04.01", "03.033.61.06.01", "03.033.61.08.01", "03.033.61.10.01", "03.033.63.02.01", "03.033.63.04.01", "03.033.63.06.01", "03.033.63.08.01", "03.033.63.10.01", "03.033.65.02.01", "03.033.65.04.01", "03.033.65.06.01", "03.033.65.08.01", "03.033.65.10.01", "03.033.67.02.01", "03.033.67.04.01", "03.033.67.06.01", "03.033.67.08.01", "03.033.67.10.01", "03.033.69.02.01", "03.033.69.04.01", "03.033.69.06.01", "03.033.69.08.01", "03.033.69.10.01", "03.033.71.02.01", "03.033.71.04.01", "03.033.71.06.01", "03.033.71.08.01", "03.033.71.10.01", "03.033.73.02.01", "03.033.73.04.01", "03.033.73.06.01", "03.033.73.08.01", "03.033.73.10.01", "03.033.75.02.01", "03.033.75.04.01", "03.033.75.06.01", "03.033.75.08.01", "03.033.75.10.01", "03.033.77.02.01", "03.033.77.04.01", "03.033.77.06.01", "03.033.77.08.01", "03.033.77.10.01", "03.033.79.02.01", "03.033.79.04.01", "03.033.79.06.01", "03.033.79.08.01", "03.033.79.10.01", "03.033.81.02.01", "03.033.81.04.01", "03.033.81.06.01", "03.033.81.08.01", "03.033.81.10.01"], "sol": ["Alex Darci", "Anderson Souza", "Antônio Teixeira", "Carlos Marcelo", "Diogo Lucas", "Elton de Souza", "Fabiano Farias", "Faustino Reis", "Francisco Wesley", "Hobede Pinheiros", "Jefferson Rouxinol", "João de Lana", "Josimar Lima", "Jucivania Dantas", "Leandro Ferreira", "Lucas Honathan", "Melquisedeque", "Railton Santana", "Reginaldo Farias", "Renildo Britto", "Rodrigo Fernandes", "Rogério Souza", "Ronivon Santos", "Wagner Carlos", "Yasser Carvalho"], "mat": [{"cod": 228752, "nome": "Filme Eco Stretch", "un": "KG", "cor": null}, {"cod": 236566, "nome": "Aplicador Amarelo", "un": "UN", "cor": "#f5a623"}, {"cod": 236567, "nome": "Aplicador Laranja", "un": "UN", "cor": "#e85d04"}, {"cod": 236568, "nome": "Aplicador Azul", "un": "UN", "cor": "#1565c0"}, {"cod": 236569, "nome": "Aplicador Verde", "un": "UN", "cor": "#2d7a22"}], "cen": [{"destino": "Expedição FLV", "cod": 342010, "nome": "Logística FLV"}, {"destino": "Recebimento FLV", "cod": 342010, "nome": "Logística FLV"}, {"destino": "Expedição Mercearia", "cod": 342011, "nome": "Logística Mercearia"}, {"destino": "Recebimento Mercearia", "cod": 342011, "nome": "Logística Mercearia"}, {"destino": "Perecível", "cod": 342001, "nome": "Logística Perecíveis"}, {"destino": "Reversa", "cod": 342004, "nome": "Logística Reversa"}, {"destino": "Desp_Logistica DF", "cod": 342006, "nome": "Desp_Logistica DF"}]};
 const FBCFG = {"apiKey": "AIzaSyAuGxC-8QzRevrnCwacv2TRTJULJrWg92k", "authDomain": "controle-de-stretch.firebaseapp.com", "databaseURL": "https://controle-de-stretch-default-rtdb.firebaseio.com", "projectId": "controle-de-stretch", "storageBucket": "controle-de-stretch.firebasestorage.app", "messagingSenderId": "750593037876", "appId": "1:750593037876:web:63647b6eda686e3101dc61"};
 let DB=null,FB_OK=false;
 try{firebase.initializeApp(FBCFG);DB=firebase.database();FB_OK=true;}catch(e){console.warn(e.message);}
@@ -1682,11 +1712,39 @@ const CUSTO={228752:17.2802,236566:7.9023,236567:7.9023,236568:7.9023,236569:7.9
 const custoUnit=cod=>CUSTO[cod]||0;
 
 // ===== FAROL DE COBERTURA =====
+let AJU=[]; // ajustes de inventário: {matCod,dir(+1/-1),qty,data,motivo,ts}
+function toggleAjusteForm(){
+  const f=document.getElementById('ajuste-form');
+  const abrir=f.style.display==='none';
+  f.style.display=abrir?'block':'none';
+  if(abrir){
+    document.getElementById('saldo-form').style.display='none';
+    const s=document.getElementById('a-mat');
+    s.innerHTML='<option value="">Selecionar...</option>'+M.mat.map(m=>`<option value="${m.cod}">${m.nome}</option>`).join('');
+    s.onchange=()=>{const m=M.mat.find(x=>x.cod==s.value);document.getElementById('a-un').textContent=m?'('+m.un+')':'';};
+    document.getElementById('a-data').value=new Date().toISOString().slice(0,10);
+  }
+}
+function salvarAjuste(){
+  const cod=document.getElementById('a-mat').value,
+    dir=parseInt(document.getElementById('a-tipo').value),
+    qty=parseFloat(document.getElementById('a-qty').value),
+    data=document.getElementById('a-data').value,
+    motivo=document.getElementById('a-motivo').value.trim();
+  if(!cod||isNaN(qty)||qty<=0||!data){alert('Preencha material, quantidade e data.');return;}
+  if(!motivo){alert('Informe o motivo do ajuste. Baixa sem motivo não tem rastreabilidade.');return;}
+  const aj={matCod:parseInt(cod),dir,qty,data,motivo,ts:Date.now()};
+  AJU.push(aj);
+  if(FB_OK)DB.ref('ajustes').push(aj);
+  document.getElementById('a-qty').value='';document.getElementById('a-motivo').value='';
+  toggleAjusteForm();rConsumo();toast('Ajuste registrado');
+}
 function toggleSaldoForm(){
   const f=document.getElementById('saldo-form');
   const abrir=f.style.display==='none';
   f.style.display=abrir?'block':'none';
   if(abrir){
+    document.getElementById('ajuste-form').style.display='none';
     const s=document.getElementById('s-mat');
     s.innerHTML='<option value="">Selecionar...</option>'+M.mat.map(m=>`<option value="${m.cod}">${m.nome}</option>`).join('');
     s.onchange=()=>{const m=M.mat.find(x=>x.cod==s.value);document.getElementById('s-un').textContent=m?'('+m.un+')':'';
@@ -1705,9 +1763,10 @@ function salvarSaldo(){
 }
 function coberturaMat(m){
   const e=EST[m.cod];if(!e)return null;
-  // saldo atual = contagem - liberações lançadas APÓS a data da contagem (posição fim do dia)
+  // saldo atual = contagem - liberações lançadas APÓS a data da contagem (posição fim do dia) ± ajustes de inventário após a contagem
   const consumido=LANC.filter(r=>r.matCod==m.cod&&r.data>e.data).reduce((s,r)=>s+r.qty,0);
-  const saldo=Math.max(0,e.qtd-consumido);
+  const ajNet=AJU.filter(a=>a.matCod==m.cod&&a.data>e.data).reduce((s,a)=>s+a.dir*a.qty,0);
+  const saldo=Math.max(0,e.qtd-consumido+ajNet);
   // semanas fechadas (seg a dom): ignora a semana corrente incompleta
   const hoje=new Date();hoje.setHours(0,0,0,0);
   const dow=(hoje.getDay()+6)%7; // 0=seg ... 6=dom
@@ -1725,7 +1784,7 @@ function coberturaMat(m){
   // tendência: última semana fechada vs média
   const ult=sem[sem.length-1].tot;
   const tend=media>0?(ult/media-1)*100:0;
-  return {saldo,media,semanas,sem,tend,contagem:e};
+  return {saldo,media,semanas,sem,tend,ajNet,contagem:e};
 }
 function rFarol(){
   const body=document.getElementById('farol-body');
@@ -1772,17 +1831,33 @@ function rFarol(){
       <div class="farol-barwrap"><div class="farol-barfill" style="width:${pct}%;background:${corBar}"></div></div>
       <div class="farol-det">
         Saldo atual: <b>${fmt(c.saldo,m.un==='KG'?1:0)} ${m.un.toLowerCase()}</b> · média <b>${fmt(c.media,1)} ${m.un.toLowerCase()}/sem</b> (${FAROL_SEMANAS} sem fechadas)<br>
-        ${tendHtml}${fimTxt}<span style="color:${corBar};font-weight:600">${rotulo}</span> · contagem de ${c.contagem.data.split('-').reverse().join('/')}
+        ${tendHtml}${fimTxt}${c.ajNet?`Ajustes desde a contagem: <b style="color:${c.ajNet<0?'var(--red)':'var(--green)'}">${c.ajNet>0?'+':''}${fmt(c.ajNet,1)} ${m.un.toLowerCase()}</b><br>`:''}<span style="color:${corBar};font-weight:600">${rotulo}</span> · contagem de ${c.contagem.data.split('-').reverse().join('/')}
       </div>
     </div>`;
   }).join('')+'</div>';
 }
 
+let cDest=''; // filtro de área do dashboard ('' = todas)
+function rChips(){
+  const el=document.getElementById('c-chips');if(!el)return;
+  const areas=['',...M.cen.map(c=>c.destino)];
+  el.innerHTML=areas.map(a=>`<span class="chip ${cDest===a?'sel':''}" onclick="selChipDash('${a}')">${a||'Todas'}</span>`).join('');
+}
+function selChipDash(a){cDest=a;rChips();rConsumo();}
+function perLimpar(){document.getElementById('c-de').value='';document.getElementById('c-ate').value='';cDest='';rChips();rConsumo();}
+function lancPeriodo(){
+  const de=document.getElementById('c-de')?.value, ate=document.getElementById('c-ate')?.value;
+  return LANC.filter(r=>(!cDest||r.destino===cDest)&&(!de||r.data>=de)&&(!ate||r.data<=ate));
+}
+
 function rConsumo(){
-  rFarol();
+  rFarol(); // farol usa LANC completo: cobertura é foto do presente
+  const LP=lancPeriodo();
+  const pc=document.getElementById('c-percount');
+  if(pc)pc.textContent=LP.length===LANC.length?LANC.length+' lançamentos (tudo)':LP.length+' de '+LANC.length+' lançamentos'+(cDest?' · '+cDest:'');
   const byA={},byS={},byMat={};let kg=0,un=0,custo=0;
   M.cen.forEach(c=>byA[c.destino]={kg:0,un:0,n:0});
-  LANC.forEach(r=>{const a=byA[r.destino]||(byA[r.destino]={kg:0,un:0,n:0});a.n++;
+  LP.forEach(r=>{const a=byA[r.destino]||(byA[r.destino]={kg:0,un:0,n:0});a.n++;
     custo+=r.qty*custoUnit(r.matCod);
     if(isFilme(r.matNome)){a.kg+=r.qty;kg+=r.qty;}else{a.un+=r.qty;un+=r.qty;}
     byMat[r.matNome]=(byMat[r.matNome]||0)+r.qty;
@@ -1793,7 +1868,7 @@ function rConsumo(){
     <div class="mc"><div class="l">Filme liberado</div><div class="v g">${fmt(kg)}<span style="font-size:13px"> kg</span></div></div>
     <div class="mc"><div class="l">Aplicador liberado</div><div class="v o">${fmt(un,0)}<span style="font-size:13px"> un</span></div></div>
     <div class="mc"><div class="l">Custo total</div><div class="v" style="font-size:19px">R$ ${fmt(custo,2)}</div><div class="h">filme + aplicador</div></div>
-    <div class="mc"><div class="l">Lançamentos</div><div class="v">${LANC.length}</div><div class="h">${Object.values(byA).filter(a=>a.n>0).length} áreas ativas</div></div>`;
+    <div class="mc"><div class="l">Lançamentos</div><div class="v">${LP.length}</div><div class="h">${Object.values(byA).filter(a=>a.n>0).length} áreas ativas</div></div>`;
 
   // rosca por área (kg de filme)
   const af=Object.entries(byA).filter(([k,v])=>v.kg>0).sort((a,b)=>b[1].kg-a[1].kg);
@@ -1862,12 +1937,13 @@ function fbLoad(){
   fbst('carregando…','var(--orange)');
   DB.ref('solicitantes').once('value').then(s=>{if(s.val()&&Array.isArray(s.val())){SOL=s.val();fillSelect('f-sol',SOL,'Selecionar...');}});
   DB.ref('estoque').once('value').then(s=>{if(s.val()){EST=s.val();rConsumo();}});
+  DB.ref('ajustes').once('value').then(s=>{if(s.val()){AJU=Object.values(s.val());rConsumo();}});
   DB.ref('lancamentos').once('value').then(snap=>{const d=snap.val();
     if(d){LANC=Object.values(d).sort((a,b)=>b.ts-a.ts);}
     fbst('✓ '+LANC.length+' lançamentos','var(--green)');rLista();rConsumo();
   }).catch(()=>fbst('✗ falha ao carregar','var(--red)'));
 }
-initForm();rConsumo();fbLoad();
+initForm();rChips();rConsumo();fbLoad();
 </script>
 
 </body></html>
