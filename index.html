@@ -2094,14 +2094,14 @@ function seedAplicadores(){
   // Data base: última contagem conhecida
   const dataBase='2026-07-23'; // data atual como referência
   const seeds={
-    236566:{qtd:75, data:'2026-03-02'}, // Amarelo · 75 un · bonificação
-    236567:{qtd:56, data:'2026-05-01'}, // Laranja · 56 un · saldo confirmado
-    236568:{qtd:110,data:'2026-05-01'}, // Azul    · 110 un · saldo confirmado
-    236569:{qtd:155,data:'2026-05-01'}, // Verde   · 155 un · saldo confirmado
+    236566:{qtd:75, data:'2026-01-01'}, // Amarelo · 75 un · bonificação
+    236567:{qtd:56, data:'2026-01-01'}, // Laranja · 56 un · saldo confirmado
+    236568:{qtd:110,data:'2026-01-01'}, // Azul    · 110 un · saldo confirmado
+    236569:{qtd:155,data:'2026-01-01'}, // Verde   · 155 un · saldo confirmado
   };
   let ok=0;
   Object.entries(seeds).forEach(([cod,v])=>{
-    if(EST[cod]){return;} // já tem saldo registrado, não sobrescreve
+    // sempre grava data base 2026-01-01 para garantir que todos os lançamentos sejam capturados
     const entry={qtd:v.qtd,data:v.data,ts:Date.now()};
     EST[String(cod)]=entry;
     if(FB_OK)DB.ref('estoque/'+cod).set(entry);
@@ -2123,7 +2123,9 @@ function checkSeedBtn(){
 function coberturaMat(m){
   const e=EST[String(m.cod)];if(!e)return null;
   // saldo atual = contagem - liberações lançadas APÓS a data da contagem (posição fim do dia) ± ajustes de inventário após a contagem
-  const consumido=LANC.filter(r=>String(r.matCod)==String(m.cod)&&r.data>e.data).reduce((s,r)=>s+r.qty,0);
+  const lancMat=LANC.filter(r=>String(r.matCod)==String(m.cod));
+  const consumido=lancMat.filter(r=>r.data>e.data).reduce((s,r)=>s+r.qty,0);
+  console.log('[farol]',m.nome,'EST:',e,'lançamentos total:',lancMat.length,'após contagem:',lancMat.filter(r=>r.data>e.data).length,'consumido:',consumido);
   const ajNet=AJU.filter(a=>String(a.matCod)==String(m.cod)&&a.data>e.data).reduce((s,a)=>s+a.dir*a.qty,0);
   const saldo=Math.max(0,e.qtd-consumido+ajNet);
   // semanas fechadas (seg a dom): ignora a semana corrente incompleta
@@ -2300,7 +2302,7 @@ function fbLoad(){
     if(s.val()&&Array.isArray(s.val())){SOL=s.val();fillSelect('f-sol',SOL,'Selecionar...');}
     return DB.ref('estoque').once('value');
   }).then(s=>{
-    if(s.val()){EST=s.val();}
+    if(s.val()){EST=s.val();console.log('[EST carregado]',JSON.stringify(EST));}
     return DB.ref('ajustes').once('value');
   }).then(s=>{
     if(s.val()){AJU=Object.values(s.val());}
