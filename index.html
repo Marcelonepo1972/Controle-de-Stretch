@@ -2083,8 +2083,8 @@ function salvarSaldo(){
     qtd=parseFloat(document.getElementById('s-qty').value),
     data=document.getElementById('s-data').value;
   if(!cod||isNaN(qtd)||qtd<0||!data){alert('Preencha material, saldo e data.');return;}
-  EST[cod]={qtd,data,ts:Date.now()};
-  if(FB_OK)DB.ref('estoque/'+cod).set(EST[cod]);
+  EST[String(cod)]={qtd,data,ts:Date.now()};
+  if(FB_OK)DB.ref('estoque/'+cod).set(EST[String(cod)]);
   toggleSaldoForm();rConsumo();toast('Saldo atualizado');
 }
 function seedAplicadores(){
@@ -2103,7 +2103,7 @@ function seedAplicadores(){
   Object.entries(seeds).forEach(([cod,v])=>{
     if(EST[cod]){return;} // já tem saldo registrado, não sobrescreve
     const entry={qtd:v.qtd,data:v.data,ts:Date.now()};
-    EST[cod]=entry;
+    EST[String(cod)]=entry;
     if(FB_OK)DB.ref('estoque/'+cod).set(entry);
     ok++;
   });
@@ -2115,16 +2115,16 @@ function seedAplicadores(){
 function checkSeedBtn(){
   // Mostrar botão seed só se algum aplicador não tiver EST registrado
   const codAplic=[236566,236567,236568,236569];
-  const faltando=codAplic.some(c=>!EST[c]);
+  const faltando=codAplic.some(c=>!EST[String(c)]);
   const btn=document.getElementById('btn-seed-aplic');
   if(btn)btn.style.display=faltando?'inline-block':'none';
 }
 
 function coberturaMat(m){
-  const e=EST[m.cod];if(!e)return null;
+  const e=EST[String(m.cod)];if(!e)return null;
   // saldo atual = contagem - liberações lançadas APÓS a data da contagem (posição fim do dia) ± ajustes de inventário após a contagem
-  const consumido=LANC.filter(r=>r.matCod==m.cod&&r.data>e.data).reduce((s,r)=>s+r.qty,0);
-  const ajNet=AJU.filter(a=>a.matCod==m.cod&&a.data>e.data).reduce((s,a)=>s+a.dir*a.qty,0);
+  const consumido=LANC.filter(r=>String(r.matCod)==String(m.cod)&&r.data>e.data).reduce((s,r)=>s+r.qty,0);
+  const ajNet=AJU.filter(a=>String(a.matCod)==String(m.cod)&&a.data>e.data).reduce((s,a)=>s+a.dir*a.qty,0);
   const saldo=Math.max(0,e.qtd-consumido+ajNet);
   // semanas fechadas (seg a dom): ignora a semana corrente incompleta
   const hoje=new Date();hoje.setHours(0,0,0,0);
