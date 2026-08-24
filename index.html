@@ -55,7 +55,7 @@ tr:hover td{background:var(--bg3)}
 .mono{font-family:'DM Mono',monospace}
 .bdg{font-size:10px;padding:2px 7px;border-radius:5px;font-weight:600}
 .bdg.f{background:var(--ok-bg);color:var(--ok-txt)}.bdg.a{background:var(--pnd-bg);color:var(--pnd-txt)}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin-bottom:18px}
 .mc{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:15px 17px}
 .mc .l{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}
 .mc .v{font-size:23px;font-weight:600;font-family:'DM Mono',monospace}
@@ -92,11 +92,12 @@ tr:hover td{background:var(--bg3)}
   <div class="logo"><div class="logo-mark">📦</div><div class="logo-title">Controle de Liberação</div><div class="logo-sub">Stretch &amp; Aplicadores · CD Oba</div></div>
   <div class="nav">
     <div class="nav-item" onclick="show(&#39;lancar&#39;,this)"><span class="ni">➕</span><span>Lançar</span></div>
+    <div class="nav-item" onclick="show(&#39;entradas&#39;,this)"><span class="ni">🚚</span><span>Entradas NF</span></div>
     <div class="nav-item active" onclick="show(&#39;lista&#39;,this)"><span class="ni">📋</span><span>Lançamentos</span></div>
     <div class="nav-item" onclick="show(&#39;consumo&#39;,this)"><span class="ni">📊</span><span>Dashboard</span></div>
     <div class="nav-item" onclick="show(&#39;bases&#39;,this)"><span class="ni">🗂️</span><span>Bases</span></div>
   </div>
-  <div class="sb-foot"><span id="fbst" class="fbst" style="color: var(--green);">✓ 214 lançamentos</span><br>v1.4 · ajuste inventário + CC 342006 · rua 33</div>
+  <div class="sb-foot"><span id="fbst" class="fbst" style="color: var(--green);">✓ 214 lançamentos</span><br>v1.5 · entradas NF + ajuste inventário · rua 33</div>
 </div>
 <div class="main">
 
@@ -127,6 +128,48 @@ tr:hover td{background:var(--bg3)}
         <button class="btn" onclick="limpar()">Limpar</button>
         <span id="f-err" style="font-size:12px;color:var(--orange);display:none">Preencha destino, material, quantidade e endereço.</span>
         <span id="edit-flag" style="font-size:12px;color:var(--blue);display:none">✎ editando lançamento</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENTRADAS NF -->
+  <div id="pg-entradas" class="page">
+    <div class="ph"><div class="pt">Entradas de material</div><div class="ps">Nota fiscal que chegou no CD. O volume entra direto no saldo do farol.</div></div>
+    <div class="panel">
+      <div class="pl">Nova entrada</div>
+      <div class="row">
+        <div class="fg"><div class="fl">Nº do documento / NF</div><input type="text" id="e-nf" placeholder="ex: 13457 ou bonificação s/ NF"></div>
+        <div class="fg"><div class="fl">Data de entrada</div><input type="date" id="e-data"></div>
+        <div class="fg"><div class="fl">Fornecedor</div><input type="text" id="e-forn" placeholder="ex: Ampacet / Bonificação"></div>
+      </div>
+      <div class="row">
+        <div class="fg"><div class="fl">Material</div><select id="e-mat" onchange="onMatEnt()"><option value="">Selecionar...</option></select></div>
+        <div class="fg"><div class="fl">Volume recebido <span id="e-un" class="mono" style="color:var(--text3)"></span></div><input type="number" id="e-qty" step="0.1" min="0" placeholder="ex: 2400"></div>
+        <div class="fg"><div class="fl">Observação</div><input type="text" id="e-obs" placeholder="opcional · ex: 16 bobinas"></div>
+      </div>
+      <div class="bar" style="margin-top:6px">
+        <button class="btn primary" onclick="salvarEntrada()">Registrar entrada</button>
+        <button class="btn" onclick="limparEntrada()">Limpar</button>
+        <span id="e-err" style="font-size:12px;color:var(--orange);display:none">Preencha NF, data, material e volume.</span>
+        <span id="e-editflag" style="font-size:12px;color:var(--blue);display:none">✎ editando entrada</span>
+      </div>
+    </div>
+
+    <div class="cards" id="e-cards"></div>
+
+    <div class="panel">
+      <div class="bar">
+        <div class="pl" style="margin-bottom:0">Entradas registradas</div>
+        <input type="text" id="e-busca" placeholder="Buscar documento, material..." oninput="rEntradas()" style="width:190px;margin-left:12px">
+        <span style="font-size:12px;color:var(--text3)">de</span><input type="date" id="e-de" onchange="rEntradas()" style="width:auto">
+        <span style="font-size:12px;color:var(--text3)">até</span><input type="date" id="e-ate" onchange="rEntradas()" style="width:auto">
+        <button class="btn sm" onclick="limparFiltroEnt()">limpar</button>
+        <button class="btn sm" onclick="exportarEntradas()">⬇ Exportar (.xlsx)</button>
+        <span style="margin-left:auto;font-size:12px;color:var(--text3)" id="e-count"></span>
+      </div>
+      <div style="overflow:auto">
+        <table><thead><tr><th>Data</th><th>Documento</th><th>Material</th><th>Volume</th><th>Custo unit.</th><th>Fornecedor</th><th>Obs</th><th></th></tr></thead>
+        <tbody id="e-body"></tbody></table>
       </div>
     </div>
   </div>
@@ -1914,6 +1957,8 @@ try{firebase.initializeApp(FBCFG);DB=firebase.database();FB_OK=true;}catch(e){co
 function fbst(t,c){const el=document.getElementById('fbst');if(el){el.textContent=t;el.style.color=c||'var(--sb-t2)';}}
 
 let LANC=[], SOL=[...M.sol], destSel='', editId=null;
+let ENT=[]; // entradas de NF: {id,nf,data,fornecedor,matCod,matNome,un,qty,obs,ts}
+let editEntId=null;
 let EST={}; // saldos informados: {matCod:{qtd,data,ts}}
 const FAROL_LIM={vermelho:1, amarelo:2}; // semanas: <1 vermelho, 1-2 amarelo, >2 verde
 const FAROL_SEMANAS=4; // semanas fechadas (seg a dom) para média de consumo
@@ -1924,7 +1969,7 @@ const isFilme=n=>n&&n.includes('Filme');
 function show(id,el){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('pg-'+id).classList.add('active');el.classList.add('active');
-  if(id==='lista')rLista();if(id==='consumo')rConsumo();if(id==='bases')rBases();}
+  if(id==='lista')rLista();if(id==='consumo')rConsumo();if(id==='bases')rBases();if(id==='entradas')rEntradas();}
 
 function fillSelect(sel,arr,ph){const s=document.getElementById(sel);s.innerHTML=(ph?`<option value="">${ph}</option>`:'')+arr.map(v=>`<option>${v}</option>`).join('');}
 
@@ -1937,6 +1982,10 @@ function initForm(){
   document.getElementById('f-data').value=new Date().toISOString().slice(0,10);
   // filtro área na lista
   document.getElementById('l-dest').innerHTML='<option value="">Todas as áreas</option>'+M.cen.map(c=>`<option>${c.destino}</option>`).join('');
+  // formulário de entradas de NF
+  const em=document.getElementById('e-mat');
+  if(em){em.innerHTML='<option value="">Selecionar...</option>'+M.mat.map(m=>`<option value="${m.cod}">${m.nome}</option>`).join('');
+    document.getElementById('e-data').value=new Date().toISOString().slice(0,10);}
 }
 function renderEnd(arr){document.getElementById('f-end').innerHTML='<option value="">Selecionar...</option>'+arr.map(e=>`<option>${e}</option>`).join('');}
 function filtEnd(){const q=document.getElementById('f-endfil').value.replace(/\s/g,'');renderEnd(M.ends.filter(e=>e.includes(q)));}
@@ -1989,6 +2038,92 @@ function rLista(){
     <td style="white-space:nowrap"><button class="btn sm" onclick="editar('${r.id}')">✎</button> <button class="btn sm danger" onclick="excluir('${r.id}')">✕</button></td>
   </tr>`).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px">Nenhum lançamento ainda.</td></tr>';
 }
+// ===== ENTRADAS DE NOTA FISCAL =====
+function onMatEnt(){const m=M.mat.find(x=>x.cod==document.getElementById('e-mat').value);
+  document.getElementById('e-un').textContent=m?'('+m.un+')':'';
+  if(m)document.getElementById('e-qty').placeholder=m.un==='KG'?'ex: 2400':'ex: 50';}
+
+function salvarEntrada(){
+  const doc=document.getElementById('e-nf').value.trim(),
+    data=document.getElementById('e-data').value,
+    forn=document.getElementById('e-forn').value.trim(),
+    cod=document.getElementById('e-mat').value,
+    qtd=parseFloat(document.getElementById('e-qty').value),
+    obs=document.getElementById('e-obs').value.trim();
+  if(!doc||!data||!cod||isNaN(qtd)||qtd<=0){
+    const e=document.getElementById('e-err');e.style.display='inline';setTimeout(()=>e.style.display='none',3500);return;}
+  const m=M.mat.find(x=>x.cod==cod);
+  const dup=ENT.find(x=>String(x.doc)===doc&&String(x.matCod)===String(cod)&&x.id!==editEntId);
+  if(dup&&!confirm('Já existe entrada do documento '+doc+' para '+m.nome+' ('+fmt(dup.qtd)+' '+m.un.toLowerCase()+'). Registrar mesmo assim?'))return;
+  // id no padrão histórico: E-<documento>; sufixo se já existir outro material na mesma NF
+  let id=editEntId;
+  if(!id){const base='E-'+doc.replace(/[.#$/\[\]]/g,'_');id=base;let n=2;
+    while(ENT.some(x=>x.id===id))id=base+'-'+(n++);}
+  const rec={id,doc,data,matCod:m.cod,qtd,ts:parseInt(data.replace(/-/g,''))};
+  if(forn)rec.fornecedor=forn;
+  if(obs)rec.obs=obs;
+  if(FB_OK){fbst('salvando…','var(--orange)');DB.ref('entradas/'+id).set(rec).then(()=>fbst('✓ salvo','var(--green)')).catch(()=>fbst('✗ erro','var(--red)'));}
+  const i=ENT.findIndex(x=>x.id===id);if(i>=0)ENT[i]=rec;else ENT.unshift(rec);
+  toast(editEntId?'Entrada atualizada':'Entrada registrada · saldo atualizado');
+  editEntId=null;document.getElementById('e-editflag').style.display='none';
+  limparEntrada();rEntradas();rConsumo();
+}
+function limparEntrada(){['e-nf','e-qty','e-obs','e-forn'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('e-mat').value='';document.getElementById('e-un').textContent='';
+  editEntId=null;document.getElementById('e-editflag').style.display='none';}
+function editarEntrada(id){const r=ENT.find(x=>x.id===id);if(!r)return;editEntId=id;
+  document.getElementById('e-nf').value=r.doc||'';document.getElementById('e-data').value=r.data;
+  document.getElementById('e-forn').value=r.fornecedor||'';
+  document.getElementById('e-mat').value=r.matCod;onMatEnt();
+  document.getElementById('e-qty').value=r.qtd;document.getElementById('e-obs').value=r.obs||'';
+  document.getElementById('e-editflag').style.display='inline';
+  window.scrollTo({top:0,behavior:'smooth'});}
+function excluirEntrada(id){const r=ENT.find(x=>x.id===id);if(!r)return;
+  if(!confirm('Excluir a entrada do documento '+r.doc+'? O volume sai do saldo do farol.'))return;
+  ENT=ENT.filter(x=>x.id!==id);if(FB_OK)DB.ref('entradas/'+id).remove();
+  rEntradas();rConsumo();toast('Entrada excluída');}
+
+function filtrarEnt(){
+  const q=(document.getElementById('e-busca')?.value||'').toLowerCase();
+  const de=document.getElementById('e-de')?.value, ate=document.getElementById('e-ate')?.value;
+  return ENT.filter(r=>(!q||(JSON.stringify(r)+matPorCod(r.matCod).nome).toLowerCase().includes(q))&&(!de||r.data>=de)&&(!ate||r.data<=ate));
+}
+function limparFiltroEnt(){['e-busca','e-de','e-ate'].forEach(i=>document.getElementById(i).value='');rEntradas();}
+
+function matPorCod(cod){return M.mat.find(m=>String(m.cod)===String(cod))||{nome:'Cód '+cod,un:'UN'};}
+function rEntradas(){
+  const body=document.getElementById('e-body');if(!body)return;
+  const rows=filtrarEnt().sort((a,b)=>b.data.localeCompare(a.data));
+  document.getElementById('e-count').textContent=rows.length+' entrada(s)';
+  let kg=0,un=0,val=0;const docs=new Set();
+  rows.forEach(r=>{const m=matPorCod(r.matCod);const q=r.qtd||0;
+    if(isFilme(m.nome))kg+=q;else un+=q;docs.add(String(r.doc));val+=q*custoUnit(r.matCod,r.data);});
+  document.getElementById('e-cards').innerHTML=`
+    <div class="mc"><div class="l">Filme recebido</div><div class="v g">${fmt(kg)}<span style="font-size:13px"> kg</span></div></div>
+    <div class="mc"><div class="l">Aplicador recebido</div><div class="v o">${fmt(un,0)}<span style="font-size:13px"> un</span></div></div>
+    <div class="mc"><div class="l">Documentos</div><div class="v">${docs.size}</div><div class="h">${rows.length} linha(s)</div></div>
+    <div class="mc"><div class="l">Valor recebido</div><div class="v" style="font-size:19px">R$ ${fmt(val,2)}</div><div class="h">preço vigente na data</div></div>`;
+  body.innerHTML=rows.map(r=>{const m=matPorCod(r.matCod);const cu=custoUnit(r.matCod,r.data);
+    return `<tr>
+    <td class="mono">${r.data.split('-').reverse().join('/')}</td>
+    <td class="mono" style="font-weight:600">${r.doc||'—'}</td>
+    <td><span class="bdg ${isFilme(m.nome)?'f':'a'}">${isFilme(m.nome)?'filme':'aplic'}</span> ${m.nome}</td>
+    <td class="mono" style="color:var(--green);font-weight:600">+${fmt(r.qtd)} ${m.un.toLowerCase()}</td>
+    <td class="mono" style="color:var(--text3)">R$ ${fmt(cu,4)}</td>
+    <td>${r.fornecedor||'—'}</td>
+    <td style="color:var(--text3)">${r.obs||''}</td>
+    <td style="white-space:nowrap"><button class="btn sm" onclick="editarEntrada('${r.id}')">✎</button> <button class="btn sm danger" onclick="excluirEntrada('${r.id}')">✕</button></td>
+  </tr>`;}).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px">Nenhuma entrada no filtro.</td></tr>';
+}
+function exportarEntradas(){
+  const rows=filtrarEnt().sort((a,b)=>a.data.localeCompare(b.data));
+  const aoa=[['Data','Documento','Codigo','Material','Volume','Un','Custo_unit','Valor_total','Fornecedor','Obs']];
+  rows.forEach(r=>{const m=matPorCod(r.matCod),cu=custoUnit(r.matCod,r.data);
+    aoa.push([r.data,r.doc,r.matCod,m.nome,r.qtd,m.un,cu,+(r.qtd*cu).toFixed(2),r.fornecedor||'',r.obs||'']);});
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),'Entradas');
+  XLSX.writeFile(wb,'Entradas_Stretch_Oba.xlsx');
+}
+
 let modalId=null;
 function editar(id){const r=LANC.find(x=>x.id===id);if(!r)return;modalId=id;
   document.getElementById('m-info').textContent='id '+r.id+(r.obs==='histórico'?' · histórico':'');
@@ -2034,8 +2169,18 @@ function excluir(id){if(!confirm('Excluir este lançamento? O endereço fica liv
 
 const DEST_COR={'Expedição FLV':'#2d7a22','Recebimento FLV':'#7b3fa0','Expedição Mercearia':'#e85d04','Recebimento Mercearia':'#1565c0','Reversa':'#f5a623','Perecível':'#c62828'};
 const APLIC_COR={'Aplicador Amarelo':'#f5a623','Aplicador Verde':'#2d7a22','Aplicador Azul':'#1565c0','Aplicador Laranja':'#e85d04'};
-const CUSTO={228752:17.2802,236566:7.9023,236567:7.9023,236568:7.9023,236569:7.9023};
-const custoUnit=cod=>CUSTO[cod]||0;
+let CUSTOS={}; // {matCod:[{de:'YYYY-MM-DD',doc,v}]} carregado do Firebase
+const CUSTO_FALLBACK={228752:17.2802,236566:7.9023,236567:7.9023,236568:7.9023,236569:7.9023};
+// custo vigente na data do movimento (tabela de preco por vigencia)
+function custoNa(cod,data){
+  const t=CUSTOS[String(cod)];
+  if(!t||!t.length)return CUSTO_FALLBACK[cod]||0;
+  const ord=[...t].sort((a,b)=>a.de.localeCompare(b.de));
+  let v=ord[0].v;
+  ord.forEach(f=>{if(!data||data>=f.de)v=f.v;});
+  return v;
+}
+const custoUnit=(cod,data)=>custoNa(cod,data);
 
 // ===== FAROL DE COBERTURA =====
 let AJU=[]; // ajustes de inventário: {matCod,dir(+1/-1),qty,data,motivo,ts}
@@ -2127,7 +2272,9 @@ function coberturaMat(m){
   const consumido=lancMat.filter(r=>r.data>e.data).reduce((s,r)=>s+r.qty,0);
   console.log('[farol]',m.nome,'EST:',e,'lançamentos total:',lancMat.length,'após contagem:',lancMat.filter(r=>r.data>e.data).length,'consumido:',consumido);
   const ajNet=AJU.filter(a=>String(a.matCod)==String(m.cod)&&a.data>e.data).reduce((s,a)=>s+a.dir*a.qty,0);
-  const saldo=Math.max(0,e.qtd-consumido+ajNet);
+  // entradas de NF recebidas APÓS a data da contagem entram no saldo
+  const entNet=ENT.filter(x=>String(x.matCod)==String(m.cod)&&x.data>e.data).reduce((s,x)=>s+(x.qtd||0),0);
+  const saldo=Math.max(0,e.qtd-consumido+ajNet+entNet);
   // semanas fechadas (seg a dom): ignora a semana corrente incompleta
   const hoje=new Date();hoje.setHours(0,0,0,0);
   const dow=(hoje.getDay()+6)%7; // 0=seg ... 6=dom
@@ -2145,7 +2292,7 @@ function coberturaMat(m){
   // tendência: última semana fechada vs média
   const ult=sem[sem.length-1].tot;
   const tend=media>0?(ult/media-1)*100:0;
-  return {saldo,media,semanas,sem,tend,ajNet,contagem:e};
+  return {saldo,media,semanas,sem,tend,ajNet,entNet,contagem:e};
 }
 function rFarol(){
   const body=document.getElementById('farol-body');
@@ -2192,7 +2339,7 @@ function rFarol(){
       <div class="farol-barwrap"><div class="farol-barfill" style="width:${pct}%;background:${corBar}"></div></div>
       <div class="farol-det">
         Saldo atual: <b>${fmt(c.saldo,m.un==='KG'?1:0)} ${m.un.toLowerCase()}</b> · média <b>${fmt(c.media,1)} ${m.un.toLowerCase()}/sem</b> (${FAROL_SEMANAS} sem fechadas)<br>
-        ${tendHtml}${fimTxt}${c.ajNet?`Ajustes desde a contagem: <b style="color:${c.ajNet<0?'var(--red)':'var(--green)'}">${c.ajNet>0?'+':''}${fmt(c.ajNet,1)} ${m.un.toLowerCase()}</b><br>`:''}<span style="color:${corBar};font-weight:600">${rotulo}</span> · contagem de ${c.contagem.data.split('-').reverse().join('/')}
+        ${tendHtml}${fimTxt}${c.entNet?`Entradas de NF desde a contagem: <b style="color:var(--green)">+${fmt(c.entNet,m.un==='KG'?1:0)} ${m.un.toLowerCase()}</b><br>`:''}${c.ajNet?`Ajustes desde a contagem: <b style="color:${c.ajNet<0?'var(--red)':'var(--green)'}">${c.ajNet>0?'+':''}${fmt(c.ajNet,1)} ${m.un.toLowerCase()}</b><br>`:''}<span style="color:${corBar};font-weight:600">${rotulo}</span> · contagem de ${c.contagem.data.split('-').reverse().join('/')}
       </div>
     </div>`;
   }).join('')+'</div>';
@@ -2216,10 +2363,15 @@ function rConsumo(){
   const LP=lancPeriodo();
   const pc=document.getElementById('c-percount');
   if(pc)pc.textContent=LP.length===LANC.length?LANC.length+' lançamentos (tudo)':LP.length+' de '+LANC.length+' lançamentos'+(cDest?' · '+cDest:'');
+  // entradas de NF no mesmo período do dashboard (não sofre filtro de área)
+  const de=document.getElementById('c-de')?.value, ate=document.getElementById('c-ate')?.value;
+  const entPerRows=ENT.filter(r=>(!de||r.data>=de)&&(!ate||r.data<=ate));
+  const entPer={kg:0,un:0,nfs:new Set(entPerRows.map(r=>String(r.doc))).size};
+  entPerRows.forEach(r=>{const mm=matPorCod(r.matCod);if(isFilme(mm.nome))entPer.kg+=(r.qtd||0);else entPer.un+=(r.qtd||0);});
   const byA={},byS={},byMat={};let kg=0,un=0,custo=0;
   M.cen.forEach(c=>byA[c.destino]={kg:0,un:0,n:0});
   LP.forEach(r=>{const a=byA[r.destino]||(byA[r.destino]={kg:0,un:0,n:0});a.n++;
-    custo+=r.qty*custoUnit(r.matCod);
+    custo+=r.qty*custoUnit(r.matCod,r.data);
     if(isFilme(r.matNome)){a.kg+=r.qty;kg+=r.qty;}else{a.un+=r.qty;un+=r.qty;}
     byMat[r.matNome]=(byMat[r.matNome]||0)+r.qty;
     const s=byS[r.solicitante]||(byS[r.solicitante]={kg:0,un:0});
@@ -2229,7 +2381,8 @@ function rConsumo(){
     <div class="mc"><div class="l">Filme liberado</div><div class="v g">${fmt(kg)}<span style="font-size:13px"> kg</span></div></div>
     <div class="mc"><div class="l">Aplicador liberado</div><div class="v o">${fmt(un,0)}<span style="font-size:13px"> un</span></div></div>
     <div class="mc"><div class="l">Custo total</div><div class="v" style="font-size:19px">R$ ${fmt(custo,2)}</div><div class="h">filme + aplicador</div></div>
-    <div class="mc"><div class="l">Lançamentos</div><div class="v">${LP.length}</div><div class="h">${Object.values(byA).filter(a=>a.n>0).length} áreas ativas</div></div>`;
+    <div class="mc"><div class="l">Lançamentos</div><div class="v">${LP.length}</div><div class="h">${Object.values(byA).filter(a=>a.n>0).length} áreas ativas</div></div>
+    <div class="mc"><div class="l">Entradas NF no período</div><div class="v g" style="font-size:19px">${fmt(entPer.kg)} kg<span style="color:var(--orange)"> · ${fmt(entPer.un,0)} un</span></div><div class="h">${entPer.nfs} documento(s)</div></div>`;
 
   // rosca por área (kg de filme)
   const af=Object.entries(byA).filter(([k,v])=>v.kg>0).sort((a,b)=>b[1].kg-a[1].kg);
@@ -2306,17 +2459,23 @@ function fbLoad(){
     return DB.ref('ajustes').once('value');
   }).then(s=>{
     if(s.val()){AJU=Object.values(s.val());}
+    return DB.ref('custos').once('value');
+  }).then(s=>{
+    if(s.val()){CUSTOS=s.val();}
+    return DB.ref('entradas').once('value');
+  }).then(s=>{
+    if(s.val()){ENT=Object.values(s.val()).sort((a,b)=>b.data.localeCompare(a.data));}
     return DB.ref('lancamentos').once('value');
   }).then(snap=>{
     const d=snap.val();
     if(d){LANC=Object.values(d).sort((a,b)=>b.ts-a.ts);}
-    fbst('✓ '+LANC.length+' lançamentos','var(--green)');
-    rLista();
+    fbst('✓ '+LANC.length+' lanç · '+ENT.length+' entradas','var(--green)');
+    rLista();rEntradas();
     rConsumo(); // roda UMA vez com todos os dados prontos
     checkSeedBtn(); // mostra botão de inicializar aplicadores se necessário
   }).catch(e=>{fbst('✗ falha ao carregar','var(--red)');console.error(e);});
 }
-initForm();rChips();rConsumo();fbLoad();
+initForm();rChips();rEntradas();rConsumo();fbLoad();
 </script>
 
 
