@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- saved from url=(0054)https://marcelonepo1972.github.io/Controle-de-Stretch/ -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Controle de Liberação · Stretch &amp; Aplicadores · Oba</title>
@@ -607,13 +606,13 @@ function rEntradas(){
   document.getElementById('e-count').textContent=rows.length+' entrada(s)';
   let kg=0,un=0,val=0;const docs=new Set();
   rows.forEach(r=>{const m=matPorCod(r.matCod);const q=r.qtd||0;
-    if(isFilme(m.nome))kg+=q;else un+=q;docs.add(String(r.doc));val+=q*custoUnit(r.matCod,r.data);});
+    if(isFilme(m.nome))kg+=q;else un+=q;docs.add(String(r.doc));val+=q*custoEnt(r);});
   document.getElementById('e-cards').innerHTML=`
     <div class="mc"><div class="l">Filme recebido</div><div class="v g">${fmt(kg)}<span style="font-size:13px"> kg</span></div></div>
     <div class="mc"><div class="l">Aplicador recebido</div><div class="v o">${fmt(un,0)}<span style="font-size:13px"> un</span></div></div>
     <div class="mc"><div class="l">Documentos</div><div class="v">${docs.size}</div><div class="h">${rows.length} linha(s)</div></div>
     <div class="mc"><div class="l">Valor recebido</div><div class="v" style="font-size:19px">R$ ${fmt(val,2)}</div><div class="h">preço vigente na data</div></div>`;
-  body.innerHTML=rows.map(r=>{const m=matPorCod(r.matCod);const cu=custoUnit(r.matCod,r.data);
+  body.innerHTML=rows.map(r=>{const m=matPorCod(r.matCod);const cu=custoEnt(r);
     return `<tr>
     <td class="mono">${r.data.split('-').reverse().join('/')}</td>
     <td class="mono" style="font-weight:600">${esc(r.doc)||'—'}</td>
@@ -628,7 +627,7 @@ function rEntradas(){
 function exportarEntradas(){
   const rows=filtrarEnt().sort((a,b)=>a.data.localeCompare(b.data));
   const aoa=[['Data','Documento','Codigo','Material','Volume','Un','Custo_unit','Valor_total','Fornecedor','Obs']];
-  rows.forEach(r=>{const m=matPorCod(r.matCod),cu=custoUnit(r.matCod,r.data);
+  rows.forEach(r=>{const m=matPorCod(r.matCod),cu=custoEnt(r);
     aoa.push([r.data,r.doc,r.matCod,m.nome,r.qtd,m.un,cu,+(r.qtd*cu).toFixed(2),r.fornecedor||'',r.obs||'']);});
   const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),'Entradas');
   XLSX.writeFile(wb,'Entradas_Stretch_Oba.xlsx');
@@ -690,6 +689,9 @@ function custoNa(cod,data){
   return v;
 }
 const custoUnit=(cod,data)=>custoNa(cod,data);
+// bonificação entra no saldo, mas sem custo
+const ehBonif=r=>/bonif/i.test(String(r.doc||''))||/bonif/i.test(String(r.fornecedor||''));
+const custoEnt=r=>ehBonif(r)?0:custoNa(r.matCod,r.data);
 
 // ===== FAROL DE COBERTURA =====
 let AJU=[]; // ajustes de inventário: {matCod,dir(+1/-1),qty,data,motivo,ts}
